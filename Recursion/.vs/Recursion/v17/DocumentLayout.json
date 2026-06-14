@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\USER\\Desktop\\C\u8A9E\u8A00\\Recursion\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{F59E3DAD-3750-477E-A39D-7776E3F27714}|Recursion.vcxproj|C:\\Users\\USER\\Desktop\\C\u8A9E\u8A00\\Recursion\\Recursion.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F59E3DAD-3750-477E-A39D-7776E3F27714}|Recursion.vcxproj|solutionrelative:Recursion.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Recursion.c",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\C\u8A9E\u8A00\\Recursion\\Recursion.c",
+              "RelativeDocumentMoniker": "Recursion.c",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\C\u8A9E\u8A00\\Recursion\\Recursion.c",
+              "RelativeToolTip": "Recursion.c",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAAwBcAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2026-06-14T13:22:00.468Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

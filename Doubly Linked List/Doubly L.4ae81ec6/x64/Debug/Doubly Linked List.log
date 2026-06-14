@@ -1,0 +1,3 @@
+﻿  Doubly Linked List.c
+C:\Users\USER\Desktop\C語言\Doubly Linked List\Doubly Linked List.c(180,4): warning C4047: 'return': 'node *' 與 'int' 間接取值的層級不同
+  Doubly Linked List.vcxproj -> C:\Users\USER\Desktop\C語言\Doubly Linked List\x64\Debug\Doubly Linked List.exe
