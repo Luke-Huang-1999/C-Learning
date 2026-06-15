@@ -1,2 +1,7 @@
 ﻿  Recursion.c
+C:\Users\USER\Desktop\C語言\Recursion\Recursion.c(17,21): warning C4101: 'result': 未參考的區域變數
+C:\Users\USER\Desktop\C語言\Recursion\Recursion.c(17,11): warning C4101: 'max': 未參考的區域變數
+C:\Users\USER\Desktop\C語言\Recursion\Recursion.c(17,6): warning C4101: 'min': 未參考的區域變數
+C:\Users\USER\Desktop\C語言\Recursion\Recursion.c(17,16): warning C4101: 'diff': 未參考的區域變數
+C:\Users\USER\Desktop\C語言\Recursion\Recursion.c(43,6): warning C4101: 'next_sum': 未參考的區域變數
   Recursion.vcxproj -> C:\Users\USER\Desktop\C語言\Recursion\x64\Debug\Recursion.exe
