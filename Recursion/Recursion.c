@@ -17,18 +17,21 @@ void even_min_max(int min, int diff, int max, int* min_even, int* max_even);
 //()患癹璸衡计羆㎝ + 程计 + 计(程, 畉, 程, 计羆㎝, 计, 程计)
 void odd_stat(int min, int diff, int max, int* sum, int* count, int* max_odd);
 
+//(案计㎝)单畉计い程硈尿案计㎝(程, 畉, 程)
+int max_even_sum(int min, int diff, int max);
+
+//(计计羆㎝)患癹璸衡计计羆㎝(饼璸衡计)
+int digit_sum(int n);
+
+//(计计羆㎝)患癹璸衡计い案计计计(饼璸衡计)
+int count_even_digits(int n);
+
 int main()
 {
 	//跑计
-	int min, max, diff,result;
-	int sum = 0;
-	int count = 0;
-	int max_odd = 0;
-	odd_stat(1, 3, 15, &sum, &count, &max_odd);
-	
-	printf("计羆㎝ = %d\n", sum);
-	printf("计 = %d\n", count);
-	printf("程计 = %d\n", max_odd);
+	int result = count_even_digits(12360);
+
+	printf("计羆㎝ = %d\n", result);
 
 	return 0;
 }
@@ -84,7 +87,6 @@ void even_min_max(int min, int diff, int max, int* min_even, int* max_even)
 	}
 }
 
-//1 4 7 10 13 ==>21
 void odd_stat(int min, int diff, int max, int* sum, int* count, int* max_odd)
 {
 	if (min > max)
@@ -98,5 +100,38 @@ void odd_stat(int min, int diff, int max, int* sum, int* count, int* max_odd)
 		(*count)++;
 		if (*max_odd == 0 || *max_odd < min)
 			*max_odd = min;
+	}
+}
+
+int max_even_sum(int min, int diff, int max)
+{
+	if (min > max)
+		return 0;
+	int sum = max_even_sum(min + diff, diff, max);
+	if (min % 2 == 0)
+		return sum + min;
+	else
+		return sum;
+
+}
+
+int digit_sum(int n)
+{
+	if (n == 0)
+		return 0;
+	else
+		return digit_sum(n / 10) + (n % 10);
+}
+
+int count_even_digits(int n)
+{
+	if (n == 0)
+		return 0;
+	else
+	{
+		if ((n % 10) % 2 == 0)
+			return count_even_digits(n / 10) + 1;
+		else
+			return count_even_digits(n / 10);
 	}
 }
