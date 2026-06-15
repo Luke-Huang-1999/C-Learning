@@ -30,12 +30,11 @@ Output: [0,1]
 
 int main()
 {
-
 	int nums[] = { 2,3,7,8,10 };
-	int target = 10;
+	int target = 100;
 	int returnSize;
 	int nums_size = sizeof(nums) / sizeof(nums[0]);
-	int* ans = twoSum(nums, 5, target, &returnSize);
+	int* ans = twoSum(nums, nums_size, target, &returnSize);
 
 	if (ans != NULL)
 	{
@@ -51,6 +50,11 @@ int main()
 int* twoSum(int* nums, int numsSize, int target, int* returnSize)
 {
 	int* result = (int*)malloc(2 * sizeof(int));
+	if (result == NULL)
+	{
+		printf("twoSum::malloc fail\n");
+		exit(1);
+	}
 	int i, j;
 	for (i = 0; i < numsSize; i++)
 	{
