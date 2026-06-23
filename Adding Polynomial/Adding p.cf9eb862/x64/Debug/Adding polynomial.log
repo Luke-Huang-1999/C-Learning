@@ -1,0 +1,3 @@
+﻿  Adding polynomial.c
+C:\Users\USER\Desktop\C語言\Adding polynomial\Adding polynomial.c(1,1): warning C4819: 檔案含有無法在目前字碼頁 (950) 中表示的字元。請以 Unicode 格式儲存檔案以防止資料遺失
+  Adding polynomial.vcxproj -> C:\Users\USER\Desktop\C語言\Adding polynomial\x64\Debug\Adding polynomial.exe
