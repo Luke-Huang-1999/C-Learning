@@ -32,6 +32,7 @@ int main()
 	pb = attach(pb, 3, 0);
 	printf("The second polynomial:\t");
 	print(pb);
+	//pa combine pb = pc
 	node* pc = NULL;
 	printf("\n");
 	pc = combine(pa, pb, pc);
