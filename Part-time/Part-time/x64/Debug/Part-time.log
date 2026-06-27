@@ -1,5 +1,7 @@
-﻿  Source.c
-C:\Users\USER\Desktop\C語言\Part-time\Source.c(77,28): warning C4244: '=': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
-C:\Users\USER\Desktop\C語言\Part-time\Source.c(105,27): warning C4244: '=': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
-C:\Users\USER\Desktop\C語言\Part-time\Source.c(114,24): warning C4244: '正在初始化': 將 'float' 轉換為 'int'，由於類型不同，可能導致資料遺失
+﻿  Part-time.c
+C:\Users\USER\Desktop\C語言\Part-time\Part-time.c(60,6): warning C4101: 'day': 未參考的區域變數
+C:\Users\USER\Desktop\C語言\Part-time\Part-time.c(59,6): warning C4101: 'month': 未參考的區域變數
+C:\Users\USER\Desktop\C語言\Part-time\Part-time.c(104,28): warning C4244: '=': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+C:\Users\USER\Desktop\C語言\Part-time\Part-time.c(132,27): warning C4244: '=': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+C:\Users\USER\Desktop\C語言\Part-time\Part-time.c(140,24): warning C4244: '正在初始化': 將 'float' 轉換為 'int'，由於類型不同，可能導致資料遺失
   Part-time.vcxproj -> C:\Users\USER\Desktop\C語言\Part-time\x64\Debug\Part-time.exe
