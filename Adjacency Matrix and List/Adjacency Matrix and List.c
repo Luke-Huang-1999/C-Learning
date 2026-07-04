@@ -1,128 +1,137 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
-#include<stdlib.h>
-#define SIZE 4
-
-struct listnode
+#include <stdlib.h>
+#define row 7
+#define col 7
+//建立結構體
+typedef struct list
 {
     char data;
-    struct listnode* next;
-};
-typedef struct listnode node;
+    struct list* next;
+}node;
+//()檢查檔案是否開啟成功(指向檔案的指標)
+void check_fopen(FILE* fptr);
 
-//()將鄰接矩陣轉換成鏈接陣列(二維矩陣, 一維鏈結陣列)
-void list(int matrix[SIZE][SIZE], node* adj_list[SIZE]);
-//()列印鏈結陣列(一維鏈結陣列)
-void print_list(node* adj_list[]);
-//(node*類型的指標地址)建立新的鏈結陣列節點(節點資料)
+//()建立鄰接矩陣(指向檔案的指標, 二維陣列)
+//該函數會將檔案內的二維矩陣輸出至matrix[row][col]
+void create_adjmatrix(FILE* fptr, int matrix[row][col]);
+
+//()建立鄰接陣列(二維陣列, 一維的node*陣列)
+//這個函數會將二維矩陣的資料建立鏈結陣列
+void create_adjlist(int matrix[row][col], node* adj_list[row]);
+
+//(node類型的指標)建立節點(欲存的char data)
+//這個函數除了malloc一個節點還初始化該節點，newnode->data = data，newnode->next = NULL
 node* create_node(char data);
 
-//()將鏈結陣列轉換成鄰接矩陣(二維矩陣, 一維鏈結陣列)
-void create_matrix(int matrix[SIZE][SIZE], node* adj_list[SIZE]);
+//()列印鄰接矩陣(二維鄰接陣列)
+void print_adjmatrix(int matrix[row][col]);
 
-//()將鄰接矩陣列列印(二維矩陣)
-void print_matrix(int matrix[SIZE][SIZE]);
+//()列印鄰接陣列(一維的node*陣列)
+void print_adjlist(node* adj_list[row]);
 
 int main()
 {
-    int matrix[SIZE][SIZE] = { {0,1,1,1},
-                               {1,0,0,1},
-                               {1,0,0,1},
-                               {1,1,1,0}, };
-    node* adj_list[SIZE] = { NULL };
-    list(matrix, adj_list);
-    print_list(adj_list);
-    int test_matrix[SIZE][SIZE] = { 0 };
+    FILE* fptr = fopen("adj_list.txt", "r");
+    check_fopen(fptr);
+    int matrix[row][col] = { 0 };
+    node* adj_list[row] = { NULL };
+    create_adjmatrix(fptr, matrix);
+    create_adjlist(matrix, adj_list);
+    print_adjlist(adj_list);
 
-    create_matrix(test_matrix, adj_list);
-    print_matrix(test_matrix);
+
+    fclose(fptr);
     return 0;
 }
 
-void list(int matrix[SIZE][SIZE], node* adj_list[SIZE])
+void check_fopen(FILE* fptr)
 {
-    char vertex[SIZE] = { 'A','B','C','D' };
-
-    for (int row = 0; row < SIZE; row++)
+    if (fptr == NULL)
     {
-        node* head = NULL;
-        node* tail = NULL;
+        printf("File open failed.\n");
+        exit(1);
+    }
+    else
+        printf("File opened successfully.\n");
+}
 
-        /* 建立每一列的第一個節點 (A、B、C、D...) */
-        head = create_node(vertex[row]);
-        tail = head;
-
-        /* 找相鄰頂點 */
-        for (int col = 0; col < SIZE; col++)
+void create_adjmatrix(FILE* fptr, int matrix[row][col])
+{
+    int i, j;
+    for (i = 0; i < row; i++)
+    {
+        for (j = 0; j < col; j++)
         {
-            if (matrix[row][col] == 1)
-            {
-                node* newnode = create_node(vertex[col]);
-
-                tail->next = newnode;
-                tail = newnode;
-            }
+            fscanf(fptr, "%d", &matrix[i][j]);
         }
-        adj_list[row] = head;
     }
 }
 
-void print_list(node* adj_list[])
+void create_adjlist(int matrix[row][col], node* adj_list[row])
 {
-    int i;
-    for (i = 0; i < SIZE; i++)
+    int i, j;
+    node* current = NULL;
+    char vertex[row] = { 'A','B','C','D','E','F','G' };
+
+    for (i = 0; i < row; i++)
     {
-        node* current = adj_list[i];
-        while (current != NULL)
+        adj_list[i] = create_node(vertex[i]);
+        current = adj_list[i];
+
+        for (j = 0; j < col; j++)
         {
-            printf("data = %c ==> address = %p  ==> next = %p\n", current->data, current, current->next);
-            current = current->next;
+            if (matrix[i][j] == 1 && i != j)
+            {
+                current->next = create_node(vertex[j]);
+                current = current->next;
+            }
         }
-        printf("====================================\n");
     }
 }
 
 node* create_node(char data)
 {
-    node* ptr = (node*)malloc(sizeof(node));
-    if (ptr == NULL)
+    node* newnode = (node*)malloc(sizeof(node));
+    if (newnode == NULL)
     {
-        printf("test::malloc failed\n");
-        exit(EXIT_FAILURE);
+        printf("create_node::newnode malloc failed\n");
+        exit(1);
     }
-    ptr->next = NULL;
-    ptr->data = data;
-    return ptr;
+
+    newnode->data = data;
+    newnode->next = NULL;
+
+    return newnode;
 }
 
-void create_matrix(int matrix[SIZE][SIZE], node* adj_list[SIZE])
+void print_adjmatrix(int matrix[row][col])
 {
-    int row, col, i;
-    char vertex[SIZE] = { 'A', 'B', 'C', 'D' };
-    for (row = 0; row < SIZE; row++)
+    int i, j;
+
+    for (i = 0; i < row; i++)
     {
-        node* current = adj_list[row];
+        for (j = 0; j < col; j++)
+        {
+            printf("%d ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+void print_adjlist(node* adj_list[row])
+{
+    int i;
+
+    for (i = 0; i < row; i++)
+    {
+        node* current = adj_list[i];
         while (current != NULL)
         {
-            for (col = 0; col < SIZE; col++)
-            {
-                if (current->data == vertex[col] && current->data != vertex[row])
-                    matrix[row][col] = 1;
-            }
+            printf("%c", current->data);
+            if (current->next != NULL)
+                printf(" -> ");
             current = current->next;
-        }
-    }
-
-}
-
-void print_matrix(int matrix[SIZE][SIZE])
-{
-    int row, col;
-    for (row = 0; row < SIZE; row++)
-    {
-        for (col = 0;col < SIZE; col++)
-        {
-            printf("%d ", matrix[row][col]);
         }
         printf("\n");
     }
