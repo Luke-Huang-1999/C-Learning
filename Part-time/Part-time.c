@@ -59,18 +59,27 @@ int main()
 	int total = 0;
 	int month;
 	int day;
-	PT work[] = {	{ June, 15, MON, 1600, 1900 },
-					{ June, 16, TUE, 1600, 1900 },
-					{ June, 18, THU, 1600, 1900 },
-					{ June, 22, MON, 1600, 1900 },
-					{ June, 23, TUE, 1600, 1900 },
-					{ June, 29, MON, 1600, 1900 },
-					{ June, 30, TUE, 1600, 1900 },
-					{ July,  3, FRI, 1400, 1700 },
+	PT work[] = {	{ June, 15, MON, 1600, 1900 },//經國校國小助教
+					{ June, 16, TUE, 1600, 1900 },//經國校國小助教
+					{ June, 18, THU, 1600, 1900 },//經國校國小助教
+					{ June, 22, MON, 1600, 1900 },//經國校國小助教
+					{ June, 23, TUE, 1600, 1900 },//經國校國小助教
+					{ June, 29, MON, 1600, 1900 },//經國校國小助教
+					{ June, 30, TUE, 1600, 1900 },//經國校國小助教
+					{ July,  1, WED, 1400, 1700 },//文昌校國二數週
+					{ July,  2, THU, 1400, 1700 },//經國校國二數週
+					{ July,  3, FRI, 1400, 1700 },//經國校國二數週
+					{ July,  6, MON, 1700, 1900 },//國小部環境整理
+					{ July,  7, TUE, 1700, 1900 },//國小部環境整理
+					{ July,  8, WED, 1400, 1630 },//文昌校國一數週
+					{ July,  9, THU, 1400, 1630 },//經國校國一英週
+					{ July, 10, FRI, 1400, 1630 },//文昌校國一英週
 	};
 	int size = sizeof(work) / sizeof(work[0]);
-	int index = search(work, size, 6, 19);
-
+	//int index = search(work, size, 6, 19);
+	check_time(work, size);
+	//float total_wage = check_time(work);
+	//printf("%d 元")
 	return 0;
 }
 
@@ -105,11 +114,12 @@ float check_time(PT work[], int size)
 		day_time = (end - start) / 60.0;
 		total_time += day_time;
 		day_cnt++;
-		printf("第%d天  %2d月%2d日  從%d到%d  共%.1f小時\n", i + 1, work[i].month, work[i].day, work[i].start, work[i].end, day_time);
+		printf("第%2d天 %2d月%2d日 從%d到%d  共%.1f小時\n", i + 1, work[i].month, work[i].day, work[i].start, work[i].end, day_time);
 	}
 	printf("===================================\n");
 	printf("工作天數%2d天\n", day_cnt);
 	printf("時數共%.1f小時\n", total_time);
+	wage(total_time);
 
 	return total_time;
 }
