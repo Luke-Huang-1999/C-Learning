@@ -9,6 +9,8 @@ typedef struct list
     char data;
     struct list* next;
 }node;
+
+
 //()檢查檔案是否開啟成功(指向檔案的指標)
 void check_fopen(FILE* fptr);
 
@@ -30,13 +32,9 @@ void print_adjmatrix(int matrix[row][col]);
 //()列印鄰接陣列(一維的node*陣列)
 void print_adjlist(node* adj_list[row]);
 
-void BSF(char data, node* adj_list[row]);
+node* BFS(char data, node* adj_list[row]);
 
 node* search_adjlist(char data, node* adj_list[row]);
-
-node* enqueue(node* ptr, node* current);
-
-node* dequeue(node* front);
 
 void print_single_adjlist(node* ptr);
 
@@ -55,9 +53,9 @@ int main()
     print_adjlist(adj_list);
     printf("=====================================================\n");
 
-    
-    BSF('A', adj_list);
-
+    node* test = NULL;
+    test = BFS('B', adj_list);
+    print_single_adjlist(test);
 
     fclose(fptr);
     return 0;
@@ -155,53 +153,65 @@ void print_adjlist(node* adj_list[row])
     }
 }
 
-void BSF(char data, node* adj_list[row])
+node* BFS(char data, node* adj_list[row])
 {
-    char queue[row] = { 0 };    //記錄一維陣列資料
-    node* current = NULL;       //指向鄰接陣列adj_list[row]
-    int front = 0;         //queue鏈結陣列前端
-    int rear = 0;          //queue鏈結陣列後端
-    int visited[row] = { 0 };   //確認是否被拜訪過；為1則不加入queue，0反之
-    int num = 0;
-    current = search_adjlist(data, adj_list);   //指向第一個走訪的資料地址
-    int i = 0;
+    node* current = NULL;
 
-    while (i < row)
+    int visit_index = 0;
+    int visited[row] = { 0 };
+
+    node* front = NULL;
+    node* rear = NULL;
+    node* pop = NULL;
+    current = search_adjlist(data, adj_list);
+
+    while (current != NULL)//第一步建立
     {
-        while (current != NULL)//入隊
-        {
-            num = (current->data) - 'A';
-            if (visited[num] == 0)//未被拜訪
-            {
-                queue[i] = current->data;
-                rear = i;
-                i = i + 1;
-            }
-            visited[num] = 1;
-            current = current->next;
-        }
-        
-        //出隊
-        printf("%c ", queue[front]);
-        front = front + 1;
+        visit_index = (current->data) - 'A';
 
-        current = search_adjlist(queue[front], adj_list);
+        if (visited[visit_index] == 0)
+        {
+            visited[visit_index] = 1;
+            node* newnode = create_node(current->data);
+
+            if (front == NULL)
+            {
+                rear = newnode;
+                front = newnode;
+                pop = newnode;
+            }
+            else
+            {
+                rear->next = newnode;
+                rear = newnode;
+            }
+        }
+        current = current->next;
     }
 
-}
+    pop = pop->next;
 
-node* enqueue(node* ptr, node* current)//入隊
-{
-    node* newnode = create_node(current->data);
-    ptr->next = newnode;
-    ptr = newnode;
-    return ptr;
-}
+    while (pop != NULL)
+    {
+        current = search_adjlist(pop->data, adj_list);
+        
+        while (current != NULL)
+        {
+            visit_index = (current->data) - 'A';
 
-node* dequeue(node* front)//出隊
-{
-    printf("%c ", front->data);
-    front = front->next;
+            if (visited[visit_index] == 0)
+            {
+                visited[visit_index] = 1;
+                node* newnode = create_node(current->data);
+
+                rear->next = newnode;
+                rear = newnode;
+            }
+            current = current->next;
+        }
+
+        pop = pop->next;
+    }
     return front;
 }
 
@@ -214,8 +224,8 @@ node* search_adjlist(char data, node* adj_list[row])
             return adj_list[i];
     }
 
-    printf("search_adjlist::char not exist\n");
-    return NULL;
+    printf("Warning::earch_adjlist::data not exist\n");
+    exit(1);
 }
 
 void print_single_adjlist(node* ptr)
