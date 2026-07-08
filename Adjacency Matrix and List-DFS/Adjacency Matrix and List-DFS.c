@@ -16,7 +16,7 @@ node* creat_node(char data);
 void print_adjlist(node* adj_list[row]);
 node* search_adjlist(char data, node* adj_list[row]);
 void print_single_adjlist(char data, node* adj_list[row]);
-node* DFS(node* adj_list[row]);
+node* DFS(char data, node* adj_list[row]);
 int main()
 {
 	//開檔
@@ -33,7 +33,7 @@ int main()
 	print_single_adjlist('G', adj_list);
 	printf("========================\n");
 
-
+	DFS('A', adj_list);
 
 	fclose(fptr);
 	return 0;
@@ -63,11 +63,11 @@ void create_adjlist(FILE* fptr, node* adj_list[row])
 		adj_list[i] = newnode;
 		end = newnode;
 
-		for (j = 0; j < col;j++)
+		for (j = 0; j < col; j++)
 		{
 			fscanf(fptr, "%d", &ch);
 
-			if (ch == 1 )
+			if (ch == 1)
 			{
 				node* newnode = creat_node(vertex[j]);
 
@@ -136,12 +136,48 @@ void print_single_adjlist(char data, node* adj_list[row])
 	printf("\n");
 }
 
-node* DFS(node* adj_list[row])
+node* DFS(char data, node* adj_list[row])
 {
-	node* stack = NULL;
+	char vertex[row] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
+	int visited[row] = { 0 };
+	int num = 0;
+
+	char stack[row] = { 0 };
 	node* top = NULL;
 	node* bot = NULL;
 	node* current = NULL;
+
+	current = search_adjlist(data, adj_list);//從何點開始
+	//底部建立
+	stack[0] = current->data;
+	num = (current->data) - 'A';
+	visited[num] = 1;
+
+	current = current->next;
+
+	while (current != NULL)//入隊
+	{
+		node* newnode = creat_node(current->data);
+
+		if (bot == NULL)
+		{
+			top = newnode;
+			bot = newnode;
+		}
+		else
+		{
+			top->next = newnode;
+			top = newnode;
+		}
+		num = (top->data) - 'A';
+		visited[num] = 1;
+
+		current = current->next;
+	}
+	
+	//出隊
+
+
 
 
 }
