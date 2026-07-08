@@ -158,7 +158,7 @@ node* DFS(char data, node* adj_list[row])
 	while (current != NULL)//入隊
 	{
 		node* newnode = creat_node(current->data);
-
+		//首頂點用刪BOT，之後用先刪TOP或直接用新頂點取代
 		if (bot == NULL)
 		{
 			top = newnode;
@@ -178,7 +178,13 @@ node* DFS(char data, node* adj_list[row])
 	//出隊
 	while (bot != NULL)
 	{
+		current = search_adjlist(data, adj_list);//從何點開始
+		//底部建立
+		stack[0] = current->data;
+		num = (current->data) - 'A';
+		visited[num] = 1;
 
+		current = current->next;
 	}
 
 
