@@ -176,8 +176,10 @@ node* DFS(char data, node* adj_list[row])
 	}
 	
 	//出隊
+	while (bot != NULL)
+	{
 
-
+	}
 
 
 }
