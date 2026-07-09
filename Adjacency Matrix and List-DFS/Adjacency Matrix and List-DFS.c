@@ -138,54 +138,60 @@ void print_single_adjlist(char data, node* adj_list[row])
 
 node* DFS(char data, node* adj_list[row])
 {
-	char vertex[row] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
+	node* adj_ptr = NULL;
+	node* stack_top = NULL;
+	//node* stack_bot = NULL;
+	//char stack[row] = { 0 };
+
 	int visited[row] = { 0 };
 	int num = 0;
+	//搜尋第一個頂點
+	adj_ptr = search_adjlist(data, adj_list);
 
-	char stack[row] = { 0 };
-	node* top = NULL;
-	node* bot = NULL;
-	node* current = NULL;
+	//先處理第一個頂點_入stack_top
+	stack_top = creat_node(data);
 
-	current = search_adjlist(data, adj_list);//從何點開始
-	//底部建立
-	stack[0] = current->data;
-	num = (current->data) - 'A';
+	//紀錄已走訪
+	num = data - 'A';
 	visited[num] = 1;
-
-	current = current->next;
-
-	while (current != NULL)//入隊
-	{
-		node* newnode = creat_node(current->data);
-		//首頂點用刪BOT，之後用先刪TOP或直接用新頂點取代
-		if (bot == NULL)
-		{
-			top = newnode;
-			bot = newnode;
-		}
-		else
-		{
-			top->next = newnode;
-			top = newnode;
-		}
-		num = (top->data) - 'A';
-		visited[num] = 1;
-
-		current = current->next;
-	}
 	
-	//出隊
-	while (bot != NULL)
+	//從第一個頂點下一個節點開始
+	//adj_ptr = adj_ptr->next;
+
+	//pop->push
+	while (stack_top != NULL)
 	{
-		current = search_adjlist(data, adj_list);//從何點開始
-		//底部建立
-		stack[0] = current->data;
-		num = (current->data) - 'A';
-		visited[num] = 1;
+		//pop()
+		printf("%c", stack_top->data);
+		if (stack_top != NULL)
+			printf(" => ");
+		//建立指向下一層節點的指標
+		node* tmp = stack_top;
+		stack_top = stack_top->next;
+		//釋放stack_top記憶體空間
+		free(tmp);
+		tmp = NULL;
+		//指向下一個要處理的節點
+		adj_ptr = adj_ptr->next;
 
-		current = current->next;
+		//push()
+		while (adj_ptr != NULL)
+		{
+			num = adj_ptr->data - 'A';
+			if (visited[num] == 0)
+			{
+				node* newnode = creat_node(adj_ptr->data);
+				newnode->next = stack_top;
+				stack_top = newnode;
+
+				visited[num] = 1;
+			}
+			
+			//指向下一個要處理的節點
+			adj_ptr = adj_ptr->next;
+		}
+		if(stack_top != NULL)
+		adj_ptr = search_adjlist(stack_top->data, adj_list);
 	}
-
 
 }
