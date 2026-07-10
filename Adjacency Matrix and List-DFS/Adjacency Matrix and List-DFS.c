@@ -140,11 +140,10 @@ node* DFS(char data, node* adj_list[row])
 {
 	node* adj_ptr = NULL;
 	node* stack_top = NULL;
-	//node* stack_bot = NULL;
-	//char stack[row] = { 0 };
 
 	int visited[row] = { 0 };
 	int num = 0;
+
 	//搜尋第一個頂點
 	adj_ptr = search_adjlist(data, adj_list);
 
@@ -154,9 +153,6 @@ node* DFS(char data, node* adj_list[row])
 	//紀錄已走訪
 	num = data - 'A';
 	visited[num] = 1;
-	
-	//從第一個頂點下一個節點開始
-	//adj_ptr = adj_ptr->next;
 
 	//pop->push
 	while (stack_top != NULL)
