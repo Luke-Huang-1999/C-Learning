@@ -13,16 +13,21 @@ node* create_node(char data);
 node* create_queue(char str[], node* front);
 void print_queue(node* ptr);
 node* enqueue(char data, node* front);
-node* dequeue(char data, node* front);
+node* dequeue(node* front);
 int main()
 {
 	char str[] = { 'A','B' ,'C' ,'1' ,'2' ,'3' ,'4' };
 	node* queue = NULL;
 	queue = create_queue(str, queue);
 	queue = enqueue('5', queue);
-	queue = dequeue('5', queue);
+	queue = dequeue(queue);
+
+
 
 	print_queue(queue);
+
+	free(queue);
+	queue = NULL;
 	return 0;
 }
 
@@ -87,46 +92,17 @@ node* enqueue(char data, node* front)
 	return front;
 }
 
-node* dequeue(char data, node* front)
+node* dequeue(node* front)
 {
 	node* rear = front;
 	node* previous = NULL;
 	node* tmp = NULL;
-	while (rear != NULL)
-	{
-		if (rear->data == data)
-			break;
 
-		previous = rear;
-		rear = rear->next;
-	}
-	if (rear == NULL)
-	{
-		printf("Can not find the char.\n");
-		exit(1);
-	}
+	tmp = front;
+	front = front->next;
 
-	if (rear->next == NULL)//末節點刪除
-	{
-		tmp = rear;
-		rear = previous;
-		rear->next = NULL;
-		free(tmp);
-	}
-	else if (previous == NULL)//首節點刪除
-	{
-		tmp = rear;
-		front = rear->next;
-		rear = rear->next;
-		free(tmp);
-	}
-	else
-	{
-		tmp = rear;
-		rear = rear->next;
-		previous->next = rear;
-		free(tmp);
-	}
+	free(tmp);
+	tmp = NULL;
 
 	return front;
 }
