@@ -1,87 +1,46 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #include<stdio.h>
 #include<stdlib.h>
-#define row 7
-#define col 7
-struct BFS
-{
-	char data;
-	struct BFS* next;
-};
-typedef struct BFS node;
-//因為是BFS所以要使用佇立
-//佇立需要兩個指標，front and rear
-//欲處理的節點為front，新節點加在rear>next
-node* create_node(char dat);
-node* BFS(char start, int matrix[row][col]);
-int search(char data);
+
+/*請撰寫一個程式。
+
+讓使用者輸入 5 個整數。
+
+最後輸出其中的最大值。
+*/
+
+/*
+題目分析 → 虛擬碼 →（必要時）流程圖 → C 程式
+題目：請撰寫一個程式，讓使用者輸入 5 個整數，最後輸出其中的最大值。
+題目分析 => 輸入：5個整數；輸出：其中的最大值。
+虛擬碼：
+	使用者輸入5個數字
+	一個一維數列接收5個數字
+	假設最大的數為第1個數
+
+	建立迴圈(從第1個數到第5個數，每次往前加一個數)
+		若最大值小於欲測試的數
+			最大值等於欲測試的數
+	
+	輸出最大值
+*/
 int main()
 {
-	char vertex[row] = { 'A','B','C' ,'D' ,'E' ,'F' ,'G' };
-    int adj_matrix[row][col] ={	{ 0, 1, 1, 1, 1, 0, 0 },
-								{ 1, 0, 0, 0, 0, 0, 0 },
-								{ 1, 0, 0, 0, 0, 0, 0 },
-								{ 1, 0, 0, 0, 0, 0, 1 },
-								{ 1, 0, 0, 0, 0, 1, 1 },
-								{ 0, 0, 0, 0, 1, 0, 1 },
-								{ 0, 0, 0, 1, 1, 1, 0 }	};
-	node* queue =  NULL;
-	
+	int i;
+	int max = 0;
+	int data[5] = { 0 };
 
+	printf("請輸入5個數字：");
+	for (i = 0; i < 5; i++)
+		scanf("%d", &data[i]);
+	
+	max = data[0];
+	for (i = 0; i < 5; i++)
+	{
+		if (max < data[i])
+			max = data[i];
+	}
+	printf("max = %d\n", max);
 
 	return 0;
-}
-
-node* create_node(char data)
-{
-	node* newnode = (node*)malloc(sizeof(node));
-	if (newnode == NULL)
-	{
-		printf("create_node is failed\n");
-		exit(1);
-	}
-	newnode->data = data;
-	newnode->next = NULL;
-
-	return newnode;
-}
-
-node* BFS(char start, int matrix[row][col])
-{
-	node* current = NULL;
-	node* rear = NULL;
-	node* queue = NULL;
-	int visited[row] = { 0 };
-
-	//首頂點先入(單一)
-	node* newnode = create_node(start);
-	queue = newnode;
-	current = newnode;
-	rear = newnode;
-	visited[search(start)] = 1;
-	start = start + 1;
-
-	while (current != NULL)
-	{
-		//先入再出
-		if (visited[search(start)] == 0)
-		{
-			int i;
-			for (i = 1; i < row; i++)
-			{
-				node* newnode = create_node(start);
-
-			}
-		}
-
-		
-	}
-
-}
-
-int search(char data)
-{
-	int num = 0;
-	num = data - 'A';
-	return num;
 }
