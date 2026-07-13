@@ -1,2 +1,3 @@
 ﻿  test.c
+C:\Users\USER\Desktop\C語言\C-Learning\TEST\test.c(63,10): warning C4244: '=': 將 'double' 轉換為 'int'，由於類型不同，可能導致資料遺失
   TEST.vcxproj -> C:\Users\USER\Desktop\C語言\C-Learning\TEST\x64\Debug\TEST.exe
