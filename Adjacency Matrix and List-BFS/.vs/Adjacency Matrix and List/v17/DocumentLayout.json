@@ -1,9 +1,9 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\USER\\Desktop\\C\u8A9E\u8A00\\Adjacency Matrix and List\\",
+  "WorkspaceRootPath": "C:\\Users\\USER\\Desktop\\C\u8A9E\u8A00\\C-Learning\\Adjacency Matrix and List-BFS\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{481F679D-0906-466F-A626-5AD485FB536F}|Adjacency Matrix and List.vcxproj|C:\\Users\\USER\\Desktop\\C\u8A9E\u8A00\\Adjacency Matrix and List\\Adjacency Matrix and List.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{481F679D-0906-466F-A626-5AD485FB536F}|Adjacency Matrix and List.vcxproj|C:\\Users\\USER\\Desktop\\C\u8A9E\u8A00\\C-Learning\\Adjacency Matrix and List-BFS\\Adjacency Matrix and List.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{481F679D-0906-466F-A626-5AD485FB536F}|Adjacency Matrix and List.vcxproj|solutionrelative:Adjacency Matrix and List.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
@@ -20,11 +20,11 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Adjacency Matrix and List.c",
-              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\C\u8A9E\u8A00\\Adjacency Matrix and List\\Adjacency Matrix and List.c",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\C\u8A9E\u8A00\\C-Learning\\Adjacency Matrix and List-BFS\\Adjacency Matrix and List.c",
               "RelativeDocumentMoniker": "Adjacency Matrix and List.c",
-              "ToolTip": "C:\\Users\\USER\\Desktop\\C\u8A9E\u8A00\\Adjacency Matrix and List\\Adjacency Matrix and List.c",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\C\u8A9E\u8A00\\C-Learning\\Adjacency Matrix and List-BFS\\Adjacency Matrix and List.c",
               "RelativeToolTip": "Adjacency Matrix and List.c",
-              "ViewState": "AgIAALoAAAAAAAAAAAAQwMEAAAAUAAAAAAAAAA==",
+              "ViewState": "AgIAAD8AAAAAAAAAAAAAAJEAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
               "WhenOpened": "2026-07-02T13:49:24.605Z",
               "EditorCaption": ""
