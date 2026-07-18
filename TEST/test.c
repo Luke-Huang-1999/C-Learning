@@ -20,6 +20,9 @@ node* create_adjlist(node* adjlist[row], int adjmatrix[row][col]);
 void print_adjlist(node* adjlist[row]);
 node* sort(node* adjlist[row]);
 void short_path(node* sortlist_head);//Kruskal method
+void print_Kruskal_path(node* current);
+char find(char vertex, char parent[]);
+void modify_parent(char from, char to, char parent[]);
 int main()
 {
 	FILE* fptr = file_open("adjmatrix.txt");
@@ -35,7 +38,10 @@ int main()
 	node* sortlist_head = sort(adjlist);
 
 	printf("================================\n\n");
-	short_path(sortlist_head);
+	char parent[row] = { 'A','A' ,'B' ,'D' ,'D' ,'F' };
+	find('C', parent);
+	//modify_parent('D', 'C', parent);
+	//short_path(sortlist_head);
 
 	fclose(fptr);
 	return 0;
@@ -149,28 +155,30 @@ void short_path(node* sortlist_head)
 	node* current = NULL;
 	current = sortlist_head;
 	int visited[row] = { 0 };
-	visited[current->p1 - 'A'] = 1;
-	visited[current->p2 - 'A'] = 1;
-	int dot_cnt = 2;
-	int line_cnt = 1;
-	//迴圈 = 邊的數量大於(點 - 1)
-	while (current != NULL)
+	int line_cnt = 0;
+
+	//終止條件 = 邊的數量大於(點 - 1)
+	while (current != NULL && line_cnt < (row - 1))
 	{
-		if (line_cnt <= (dot_cnt - 1))//不是迴圈
+		if (visited[current->p1 - 'A'] == 0 && visited[current->p2 - 'A'] == 0)
 		{
-			printf("使用線段%c%c == > weight = %d\n", current->p1, current->p2, current->weight);
-			if (visited[current->p1 - 'A'] == 0 && visited[current->p2 - 'A'] == 0)
-			{
-				dot_cnt = dot_cnt + 2;
-				line_cnt = line_cnt + 1;
-			}
-			else
-			{
-				dot_cnt = dot_cnt + 1;
-				line_cnt = line_cnt + 1;
-			}
+			print_Kruskal_path(current);
+			line_cnt++;
+
 			visited[current->p1 - 'A'] = 1;
 			visited[current->p2 - 'A'] = 1;
+		}
+		else if (visited[current->p1 - 'A'] == 0 || visited[current->p2 - 'A'] == 0)
+		{
+			print_Kruskal_path(current);
+			line_cnt++;
+
+			visited[current->p1 - 'A'] = 1;
+			visited[current->p2 - 'A'] = 1;
+		}
+		else
+		{
+
 		}
 		current = current->next;
 	}
@@ -200,7 +208,7 @@ node* sort(node* adjlist[row])
 				sortlist->next = newnode;
 				sortlist = newnode;
 			}
-			
+
 			line_cnt++;
 			current = current->next;
 		}
@@ -209,7 +217,7 @@ node* sort(node* adjlist[row])
 	for (i = 0; i < (line_cnt - 1); i++)
 	{
 		sortlist = sortlist_head;
-		while(sortlist->next != NULL)
+		while (sortlist->next != NULL)
 		{
 			if (sortlist->weight > sortlist->next->weight)
 			{
@@ -238,3 +246,44 @@ node* sort(node* adjlist[row])
 
 	return sortlist_head;
 }
+
+void print_Kruskal_path(node* current)
+{
+	printf("使用線段%c%c == > weight = %d\n", current->p1, current->p2, current->weight);
+}
+
+char find(char vertex, char parent[])
+{
+	int num = vertex - 'A';
+	while (parent[num] != vertex)
+	{
+
+	}
+/*
+A->B->C
+parent[2] = B ==> B != C
+
+parent[C] = B
+parent[B] = A
+parent[A] = A
+*/
+	return parent[num];
+}
+
+void modify_parent(char from, char to, char parent[])
+{
+	char target = find(to, parent);
+	int i;
+	for (i = 0; i < row; i++)
+	{
+		if (parent[i] == from)
+		{
+			parent[from - 'A'] = target;
+		}
+	}
+	for (i = 0; i < row; i++)
+	{
+		printf("parent[%c] = %c\n", 'A' + i, parent[i]);
+	}
+}
+
