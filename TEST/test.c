@@ -38,10 +38,8 @@ int main()
 	node* sortlist_head = sort(adjlist);
 
 	printf("================================\n\n");
-	char parent[row] = { 'A','A' ,'B' ,'D' ,'D' ,'F' };
-	find('C', parent);
-	//modify_parent('D', 'C', parent);
-	//short_path(sortlist_head);
+
+	short_path(sortlist_head);
 
 	fclose(fptr);
 	return 0;
@@ -151,6 +149,7 @@ void print_adjlist(node* adjlist[row])
 
 void short_path(node* sortlist_head)
 {
+	char parent[row] = { 'A','B' ,'C' ,'D' ,'E' ,'F' };
 	int i;
 	node* current = NULL;
 	current = sortlist_head;
@@ -160,29 +159,17 @@ void short_path(node* sortlist_head)
 	//終止條件 = 邊的數量大於(點 - 1)
 	while (current != NULL && line_cnt < (row - 1))
 	{
-		if (visited[current->p1 - 'A'] == 0 && visited[current->p2 - 'A'] == 0)
+		if (find(current->p1, parent) != find(current->p2, parent))
 		{
 			print_Kruskal_path(current);
 			line_cnt++;
-
+			modify_parent(current->p2, current->p1, parent);
 			visited[current->p1 - 'A'] = 1;
 			visited[current->p2 - 'A'] = 1;
 		}
-		else if (visited[current->p1 - 'A'] == 0 || visited[current->p2 - 'A'] == 0)
-		{
-			print_Kruskal_path(current);
-			line_cnt++;
 
-			visited[current->p1 - 'A'] = 1;
-			visited[current->p2 - 'A'] = 1;
-		}
-		else
-		{
-
-		}
 		current = current->next;
 	}
-
 }
 
 node* sort(node* adjlist[row])
@@ -254,36 +241,25 @@ void print_Kruskal_path(node* current)
 
 char find(char vertex, char parent[])
 {
-	int num = vertex - 'A';
-	while (parent[num] != vertex)
-	{
+	char test = vertex;
+	while (parent[test - 'A'] != test)
+		test = parent[test - 'A'];
 
-	}
-/*
-A->B->C
-parent[2] = B ==> B != C
+	if (parent[vertex - 'A'] != test)
+		parent[vertex - 'A'] = test;
 
-parent[C] = B
-parent[B] = A
-parent[A] = A
-*/
-	return parent[num];
+	return test;
 }
 
 void modify_parent(char from, char to, char parent[])
 {
-	char target = find(to, parent);
+	char parent_from = find(from, parent);
+	char parent_to = find(to, parent);
 	int i;
 	for (i = 0; i < row; i++)
 	{
-		if (parent[i] == from)
-		{
-			parent[from - 'A'] = target;
-		}
-	}
-	for (i = 0; i < row; i++)
-	{
-		printf("parent[%c] = %c\n", 'A' + i, parent[i]);
+		if (parent[i] == parent_from)
+			parent[i] = parent_to;
 	}
 }
 
