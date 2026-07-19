@@ -6,44 +6,41 @@
 0	0	1	2	0	0
 
 adjmatrix print:
- 0  2  6  1  2  0
- 2  0  0  0  0  0
- 6  0  0  3  5  7
- 1  0  3  0  0  4
- 2  0  5  0  0  0
- 0  0  7  4  0  0
-
-p1 = A, p2 = B, weight = 2
-p1 = A, p2 = C, weight = 6
-p1 = A, p2 = D, weight = 1
-p1 = A, p2 = E, weight = 2
-
-
-p1 = C, p2 = D, weight = 3
-p1 = C, p2 = E, weight = 5
-p1 = C, p2 = F, weight = 7
-
-p1 = D, p2 = F, weight = 4
-
-
+ 0  5  6  7  2  0
+ 5  0  0  0  0  0
+ 6  0  0  3  4  1
+ 7  0  3  0  0  2
+ 2  0  4  0  0  0
+ 0  0  1  2  0  0
 
 ================================
 
-p1 = A, p2 = D, weight = 1
-p1 = A, p2 = B, weight = 2
+adjlist print:
+p1 = A, p2 = B, weight = 5
+p1 = A, p2 = C, weight = 6
+p1 = A, p2 = D, weight = 7
 p1 = A, p2 = E, weight = 2
 p1 = C, p2 = D, weight = 3
-p1 = D, p2 = F, weight = 4
-p1 = C, p2 = E, weight = 5
-p1 = A, p2 = C, weight = 6
-p1 = C, p2 = F, weight = 7
+p1 = C, p2 = E, weight = 4
+p1 = C, p2 = F, weight = 1
+p1 = D, p2 = F, weight = 2
 ================================
 
-使用線段AD == > weight = 1
-使用線段AB == > weight = 2
-使用線段AE == > weight = 2
-使用線段CD == > weight = 3
-使用線段DF == > weight = 4
-使用線段CE == > weight = 5
-使用線段AC == > weight = 6
-使用線段CF == > weight = 7
+sortlist print:
+p1 = C, p2 = F, weight = 1
+p1 = A, p2 = E, weight = 2
+p1 = D, p2 = F, weight = 2
+p1 = C, p2 = D, weight = 3
+p1 = C, p2 = E, weight = 4
+p1 = A, p2 = B, weight = 5
+p1 = A, p2 = C, weight = 6
+p1 = A, p2 = D, weight = 7
+
+
+	A	B	C	D	E	F
+A	0	5	6	7	2	0
+B	0	0	0	0	0	0
+C	0	0	0	3	4	1
+D	0	0	0	0	0	2
+E	0	0	0	0	0	0
+F	0	0	0	0	0	0
