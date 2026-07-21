@@ -1,2 +1,4 @@
 ﻿  test.c
+C:\Users\USER\Desktop\C語言\C-Learning\TEST\test.c(178,63): warning C4133: '函式': 不相容的類型 - 從 'int [6]' 至 'char *'
+C:\Users\USER\Desktop\C語言\C-Learning\TEST\test.c(215,38): warning C4133: '函式': 不相容的類型 - 從 'int [6]' 至 'char *'
   TEST.vcxproj -> C:\Users\USER\Desktop\C語言\C-Learning\TEST\x64\Debug\TEST.exe

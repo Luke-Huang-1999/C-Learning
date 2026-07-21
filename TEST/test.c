@@ -19,8 +19,10 @@ void print_adjmatrix(int adjmatrix[row][col]);
 node* create_adjlist(node* adjlist[row], int adjmatrix[row][col]);
 void print_adjlist(node* adjlist[row]);
 
-
-
+void prim_method(char start, node* adjlist[]);
+void visited_modify(char p1, char p2, char visited[row]);
+char nonvisited(char p1, char p2, char visited[row]);
+node* delete_edgelist(char nxt, node* edgelist_head);
 int main()
 {
 	//宣告
@@ -42,6 +44,8 @@ int main()
 	print_adjlist(adjlist);//鄰接鏈結串列
 	printf("================================\n\n");
 	
+	printf("Testing prim_method：\n================================\n");
+	prim_method('A', adjlist);
 
 	//關閉檔案
 	fclose(fptr);
@@ -141,8 +145,8 @@ void print_adjlist(node* adjlist[row])
 		current = adjlist[i];
 		while (current != NULL)
 		{
-			//printf("p1 = %c, p2 = %c, weight = %d, address = %p, next address = %p\n", current->p1, current->p2, current->weight, current,current->next);
-			printf("p1 = %c, p2 = %c, weight = %d\n", current->p1, current->p2, current->weight);
+			printf("p1 = %c, p2 = %c, weight = %d, address = %p, next address = %p\n", current->p1, current->p2, current->weight, current,current->next);
+			//printf("p1 = %c, p2 = %c, weight = %d\n", current->p1, current->p2, current->weight);
 			current = current->next;
 		}
 		//printf("\n");
@@ -150,4 +154,134 @@ void print_adjlist(node* adjlist[row])
 
 }
 
+void prim_method(char start, node* adjlist[])
+{
+	int visited[row] = { 0 };
+	char nxt = start;
+	node* edgelist_head = NULL;
+	node* edgelist = NULL;
+	node* current_adjlist = NULL;
+	int line_cnt = 0;
+	//將含有特定點的節點加入edge list
+	while (line_cnt < (row - 1))
+	{
+		int i;
+		for (i = 0; i < row; i++)
+		{
+			current_adjlist = adjlist[i];
 
+			while (current_adjlist != NULL)
+			{
+				if (current_adjlist->p1 == nxt || current_adjlist->p2 == nxt)
+				{
+					//更新已拜訪節點
+					visited_modify(current_adjlist->p1, current_adjlist->p2, visited);
+
+					node* newnode = create_node(current_adjlist->p1, current_adjlist->p2, current_adjlist->weight);
+					if (edgelist_head == NULL)
+					{
+						edgelist_head = newnode;
+						edgelist = newnode;
+					}
+					else
+					{
+						edgelist->next = newnode;
+						edgelist = newnode;
+					}
+					line_cnt++;
+				}
+				current_adjlist = current_adjlist->next;
+			}
+		}
+
+
+		//edgelist先去除皆已走訪的節點
+		edgelist_head = delete_edgelist(nxt, edgelist_head);
+		//找最小並列印
+		node* find_min = edgelist_head->next;
+		node* min = edgelist_head;
+		while (find_min != NULL)
+		{
+			if (min->weight > find_min->weight)
+				min = find_min;
+
+			find_min = find_min->next;
+		}
+
+		//列印
+		printf("選擇邊%c%c => weight = %d\n", min->p1, min->p2, min->weight);
+
+		//決定current_adjlist指向
+		nxt = nonvisited(min->p1, min->p2, visited);
+	}
+	
+
+	//測試
+	//printf("min ==> p1 = %c, p2 = %c, weight = %d\n", min->p1, min->p2, min->weight);
+	/*node* test = edgelist_head;
+	while (test != NULL)
+	{
+		printf("p1 = %c, p2 = %c, weight = %d\n", test->p1, test->p2, test->weight);
+		test = test->next;
+	}*/
+
+
+}
+
+void visited_modify(char p1, char p2, char visited[row])
+{
+	int num_1 = p1 - 'A';
+	int num_2 = p2 - 'A';
+	visited[num_1] = 1;
+	visited[num_2] = 1;
+
+}
+
+char nonvisited(char p1, char p2, char visited[row])
+{
+	int num_1 = p1 - 'A';
+	int num_2 = p2 - 'A';
+
+	if (visited[num_1] == 0)
+		return p1;
+	else
+		return p2;
+}
+
+node* delete_edgelist(char nxt, node* edgelist_head)
+{
+	node* current = edgelist_head;
+	node* previous = NULL;
+	node* tmp = NULL;
+	while (current != NULL)
+	{
+		if (current->p1 == nxt || current->p2 == nxt)
+		{
+			if (previous->next == NULL)//單一節點或初始節點
+			{
+				tmp = current;
+				current = current->next;
+				free(tmp);
+				tmp = NULL;
+			}
+			else if (current->next)//末節點刪除
+			{
+				tmp = current;
+				current = previous;
+				free(tmp);
+				tmp = NULL;
+			}
+			else
+			{
+				tmp = current;
+				previous->next = current->next;
+				current = current->next;
+				free(tmp);
+				tmp = NULL;
+			}
+		}
+		previous = current;
+		current = current->next;
+	}
+	return edgelist_head;
+}
