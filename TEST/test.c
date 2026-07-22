@@ -20,8 +20,8 @@ node* create_adjlist(node* adjlist[row], int adjmatrix[row][col]);
 void print_adjlist(node* adjlist[row]);
 
 void prim_method(char start, node* adjlist[]);
-void visited_modify(char p1, char p2, char visited[row]);
-char nonvisited(char p1, char p2, char visited[row]);
+void visited_modify(char p1, char p2, int visited[row]);
+char nonvisited(char p1, char p2, int visited[row]);
 node* delete_edgelist(char nxt, node* edgelist_head);
 int main()
 {
@@ -174,8 +174,6 @@ void prim_method(char start, node* adjlist[])
 			{
 				if (current_adjlist->p1 == nxt || current_adjlist->p2 == nxt)
 				{
-					//更新已拜訪節點
-					visited_modify(current_adjlist->p1, current_adjlist->p2, visited);
 
 					node* newnode = create_node(current_adjlist->p1, current_adjlist->p2, current_adjlist->weight);
 					if (edgelist_head == NULL)
@@ -194,9 +192,6 @@ void prim_method(char start, node* adjlist[])
 			}
 		}
 
-
-		//edgelist先去除皆已走訪的節點
-		edgelist_head = delete_edgelist(nxt, edgelist_head);
 		//找最小並列印
 		node* find_min = edgelist_head->next;
 		node* min = edgelist_head;
@@ -208,8 +203,16 @@ void prim_method(char start, node* adjlist[])
 			find_min = find_min->next;
 		}
 
+
+		//edgelist先去除皆已走訪的節點
+		edgelist_head = delete_edgelist(nxt, edgelist_head);
+
+
 		//列印
 		printf("選擇邊%c%c => weight = %d\n", min->p1, min->p2, min->weight);
+
+		//更新已拜訪節點
+		visited_modify(min->p1, min->p2, min);
 
 		//決定current_adjlist指向
 		nxt = nonvisited(min->p1, min->p2, visited);
@@ -228,7 +231,7 @@ void prim_method(char start, node* adjlist[])
 
 }
 
-void visited_modify(char p1, char p2, char visited[row])
+void visited_modify(char p1, char p2, int visited[row])
 {
 	int num_1 = p1 - 'A';
 	int num_2 = p2 - 'A';
@@ -237,7 +240,7 @@ void visited_modify(char p1, char p2, char visited[row])
 
 }
 
-char nonvisited(char p1, char p2, char visited[row])
+char nonvisited(char p1, char p2, int visited[row])
 {
 	int num_1 = p1 - 'A';
 	int num_2 = p2 - 'A';
@@ -257,7 +260,7 @@ node* delete_edgelist(char nxt, node* edgelist_head)
 	{
 		if (current->p1 == nxt || current->p2 == nxt)
 		{
-			if (previous->next == NULL)//單一節點或初始節點
+			if (previous == NULL)//單一節點或初始節點
 			{
 				tmp = current;
 				current = current->next;
