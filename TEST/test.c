@@ -22,7 +22,7 @@ void print_adjlist(node* adjlist[row]);
 void prim_method(char start, node* adjlist[]);
 void visited_modify(char p1, char p2, int visited[row]);
 char nonvisited(char p1, char p2, int visited[row]);
-node* delete_edgelist(char nxt, node* edgelist_head);
+node* delete_edgelist(int visited[row], node* edgelist_head);
 int main()
 {
 	//宣告
@@ -157,6 +157,7 @@ void print_adjlist(node* adjlist[row])
 void prim_method(char start, node* adjlist[])
 {
 	int visited[row] = { 0 };
+	visited[start - 'A'] = 1;
 	char nxt = start;
 	node* edgelist_head = NULL;
 	node* edgelist = NULL;
@@ -186,11 +187,15 @@ void prim_method(char start, node* adjlist[])
 						edgelist->next = newnode;
 						edgelist = newnode;
 					}
-					line_cnt++;
+					
 				}
 				current_adjlist = current_adjlist->next;
 			}
 		}
+
+		//edgelist先去除皆已走訪的節點
+		edgelist_head = delete_edgelist(visited, edgelist_head);
+
 
 		//找最小並列印
 		node* find_min = edgelist_head->next;
@@ -204,21 +209,22 @@ void prim_method(char start, node* adjlist[])
 		}
 
 
-		//edgelist先去除皆已走訪的節點
-		edgelist_head = delete_edgelist(nxt, edgelist_head);
-
-
 		//列印
 		printf("選擇邊%c%c => weight = %d\n", min->p1, min->p2, min->weight);
 
-		//更新已拜訪節點
-		visited_modify(min->p1, min->p2, min);
+
+		//紀錄輸出線段數量
+		line_cnt++;
 
 		//決定current_adjlist指向
 		nxt = nonvisited(min->p1, min->p2, visited);
+
+		//更新已拜訪節點
+		visited_modify(min->p1, min->p2, visited);
+
+
 	}
 	
-
 	//測試
 	//printf("min ==> p1 = %c, p2 = %c, weight = %d\n", min->p1, min->p2, min->weight);
 	/*node* test = edgelist_head;
@@ -251,40 +257,50 @@ char nonvisited(char p1, char p2, int visited[row])
 		return p2;
 }
 
-node* delete_edgelist(char nxt, node* edgelist_head)
+node* delete_edgelist(int visited[row], node* edgelist_head)
 {
+	int num_1 = 0;
+	int num_2 = 0;
 	node* current = edgelist_head;
 	node* previous = NULL;
 	node* tmp = NULL;
 	while (current != NULL)
 	{
-		if (current->p1 == nxt || current->p2 == nxt)
+		num_1 = current->p1 - 'A';
+		num_2 = current->p2 - 'A';
+		if (visited[num_1] == 1 && visited[num_2] == 1)//兩點皆重複
 		{
-			if (previous == NULL)//單一節點或初始節點
+			if (previous == NULL)//首節點刪除
 			{
 				tmp = current;
 				current = current->next;
+				edgelist_head = current;
 				free(tmp);
 				tmp = NULL;
 			}
-			else if (current->next)//末節點刪除
+			else if (current->next == NULL)//末節點刪除
 			{
 				tmp = current;
 				current = previous;
+				current->next = NULL;
 				free(tmp);
 				tmp = NULL;
 			}
 			else
 			{
-				tmp = current;
 				previous->next = current->next;
+				tmp = current;
 				current = current->next;
 				free(tmp);
 				tmp = NULL;
 			}
 		}
-		previous = current;
-		current = current->next;
+		else
+		{
+			previous = current;
+			current = current->next;
+		}
+			
 	}
 	return edgelist_head;
 }
