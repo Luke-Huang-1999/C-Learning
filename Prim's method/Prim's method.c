@@ -23,6 +23,8 @@ void prim_method(char start, node* adjlist[]);
 void visited_modify(char p1, char p2, int visited[row]);
 char nonvisited(char p1, char p2, int visited[row]);
 node* delete_edgelist(int visited[row], node* edgelist_head);
+
+
 int main()
 {
 	//宣告

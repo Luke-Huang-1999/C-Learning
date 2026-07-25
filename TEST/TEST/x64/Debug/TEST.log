@@ -1,2 +1,3 @@
 ﻿  test.c
-  TEST.vcxproj -> C:\Users\USER\Desktop\C語言\C-Learning\TEST\x64\Debug\TEST.exe
+MSVCRTD.lib(exe_main.obj) : error LNK2019: 在函式 main"int __cdecl invoke_main(void)" (?invoke_main@@YAHXZ) 中參考了無法解析的外部符號
+C:\Users\USER\Desktop\C語言\C-Learning\TEST\x64\Debug\TEST.exe : fatal error LNK1120: 1 個無法解析的外部符號
