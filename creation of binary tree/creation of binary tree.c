@@ -42,16 +42,24 @@ node* create_tree(node* root, char str[])
 	//左子樹 => 右子樹 => 前一節點的左子樹 =>...
 	root = NULL;
 	node* current = NULL;
-	int i = 0;
+	node* nxt = NULL;
+	//根節點先建立
+	node* newnode = create_node(str[0]);
+	root = newnode;
+	current = root;
+	nxt = current->left;
+
+
+	int i = 1;
 	while (str[i] != '\0')
 	{
-
-		if (root == NULL)
+		if (str[i] != 0)
 		{
 			node* newnode = create_node(str[i]);
-			root = newnode;
-			current = newnode;
+			nxt = newnode;
+			
 		}
+
 
 	}
 
