@@ -1,0 +1,7 @@
+﻿  creation of binary tree.c
+C:\Users\USER\Desktop\C語言\C-Learning\creation of binary tree\creation of binary tree.c(19,9): warning C4477: 'printf' : 格式字串 '%d' 需要 'int' 類型的引數，但 variadic 引數 1 的類型為 'size_t'
+      C:\Users\USER\Desktop\C語言\C-Learning\creation of binary tree\creation of binary tree.c(19,9):
+      請考慮在格式字串中使用 '%zd'
+  
+C:\Users\USER\Desktop\C語言\C-Learning\creation of binary tree\creation of binary tree.c(44,1): warning C4716: 'create_tree': 必須傳回值
+  creation of binary tree.vcxproj -> C:\Users\USER\Desktop\C語言\C-Learning\creation of binary tree\x64\Debug\creation of binary tree.exe
