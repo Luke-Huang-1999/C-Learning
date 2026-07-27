@@ -14,7 +14,8 @@ void create_adjmatrix(FILE* fptr, int adjmatrix[row][col]);
 FILE* file_open(char name[], char mode[]);
 void print_adjmatrix(int adjmatrix[row][col]);
 void vertex_sorting(int vertex[row], int adjmatrix[row][col]);
-
+void print_vertex(int vertex[row]);
+void topological_sorting(int vertex[row], int adjmatrix[row][col], char activity[][15]);
 int main()
 {
     //宣告
@@ -29,6 +30,12 @@ int main()
     create_adjmatrix(fptr, adjmatrix);
     //分支度紀錄
     vertex_sorting(vertex, adjmatrix);
+    
+    print_adjmatrix(adjmatrix);
+    
+    print_vertex(vertex);
+    printf("\n");
+    topological_sorting(vertex, adjmatrix, activity);
 
 
     fclose(fptr);
@@ -65,6 +72,7 @@ FILE* file_open(char name[],char mode[])
 void print_adjmatrix(int adjmatrix[row][col])
 {
     int i, j;
+    printf("adjmatrix[row][col] = \n");
     for (i = 0; i < row; i++)
     {
         for (j = 0; j < col; j++)
@@ -73,6 +81,7 @@ void print_adjmatrix(int adjmatrix[row][col])
         }
         printf("\n");
     }
+    printf("\n");
 }
 
 void vertex_sorting(int vertex[row], int adjmatrix[row][col])
@@ -88,5 +97,49 @@ void vertex_sorting(int vertex[row], int adjmatrix[row][col])
         }
         vertex[j] = sum;
     }
+
+}
+
+void print_vertex(int vertex[row])
+{
+    int i;
+    printf("vertex[row] = ");
+    for (i = 0; i < row; i++)
+    {
+        printf("%d ", vertex[i]);
+    }
+    printf("\n");
+}
+
+void topological_sorting(int vertex[row], int adjmatrix[row][col], char activity[][15])
+{
+    printf("topological_sorting = ");
+    int dot_cnt = 0;
+    int visited[row] = { 0 };
+    //找出vertex[i] = 0 ==> 將i行的資料都 = 0 ==> 更新vertex資料
+    while (dot_cnt < row)
+    {
+        int i = 0;
+        while (vertex[i] != 0 || visited[i] != 0)
+        {
+            i++;
+        }
+        printf("%s ", activity[i]);
+
+        dot_cnt++;
+        visited[i] = 1;
+
+        int j;
+        for (j = 0;j < col; j++)
+        {
+            adjmatrix[i][j] = 0;
+        }
+
+        //print_adjmatrix(adjmatrix);
+
+        vertex_sorting(vertex, adjmatrix);
+
+    }
+
 
 }
