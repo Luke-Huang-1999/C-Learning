@@ -11,6 +11,7 @@ typedef struct HuffmanNode
 
 float cal_percent(char str[], int size_str, char target);
 node* create_node(char data, int weight);
+node* sortstb(char str[], int size_str);
 
 int main()
 {
@@ -56,4 +57,10 @@ node* create_node(char data, int weight)
 	newnode->left = NULL;
 
 	return newnode;
+}
+
+node* sortstb(char str[], int size_str)
+{
+	node* sortlist[] = { NULL };
+
 }
