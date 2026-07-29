@@ -19,7 +19,7 @@ int main()
 	int size_str = sizeof(str) - 1;//-1為扣除\0
 
 	//test
-	float a = cal_percent(str,size_str, 'A');
+	float a = cal_percent(str, size_str, 'A');
 	printf("percent = %.3f\n", a);
 
 	return 0;
