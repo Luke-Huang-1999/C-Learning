@@ -1,6 +1,7 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #include<stdio.h>
 #include<stdlib.h>
+#define num 4
 typedef struct HuffmanNode
 {
 	char data;                  // 字元
@@ -11,17 +12,14 @@ typedef struct HuffmanNode
 
 float cal_percent(char str[], int size_str, char target);
 node* create_node(char data, int weight);
-node* sortstb(char str[], int size_str);
+node* sortlist(char str[], int weight);
 
 int main()
 {
 	//宣告
-	char str[] = "AAAAABBC";
+	char str[] = "AAAAABBCD";
 	int size_str = sizeof(str) - 1;//-1為扣除\0
-
-	//test
-	float a = cal_percent(str, size_str, 'A');
-	printf("percent = %.3f\n", a);
+	
 
 	return 0;
 }
@@ -59,8 +57,7 @@ node* create_node(char data, int weight)
 	return newnode;
 }
 
-node* sortstb(char str[], int size_str)
+node* sortlist(char str[], int weight)
 {
-	node* sortlist[] = { NULL };
 
 }
