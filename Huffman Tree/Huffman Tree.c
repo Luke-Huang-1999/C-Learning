@@ -1,7 +1,7 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #include<stdio.h>
 #include<stdlib.h>
-#define num 4
+
 typedef struct HuffmanNode
 {
 	char data;                  // 字元
@@ -10,16 +10,34 @@ typedef struct HuffmanNode
 	struct HuffmanNode* right;  // 右子樹
 }node;
 
+typedef struct simplenode
+{
+	char data;                  // 字元
+	int weight;                 // 權重(出現次數)
+}snode;
+
 float cal_percent(char str[], int size_str, char target);
 node* create_node(char data, int weight);
-node* sortlist(char str[], int weight);
+void weightlist(char str[], snode sort[], int size_str);
+void sortlist(snode sort[]);
 
 int main()
 {
 	//宣告
-	char str[] = "AAAAABBCD";
+	char str[] = "ACBABAADA";
 	int size_str = sizeof(str) - 1;//-1為扣除\0
-	
+
+	snode sort[4] = { 0 };
+	weightlist(str, sort, size_str);
+
+	sortlist(sort);
+
+	int i;
+	for (i = 0; i < 4; i++)
+	{
+		printf("%c %d\n", sort[i].data, sort[i].weight);
+	}
+
 
 	return 0;
 }
@@ -57,7 +75,32 @@ node* create_node(char data, int weight)
 	return newnode;
 }
 
-node* sortlist(char str[], int weight)
+void weightlist(char str[], snode sort[],int size_str)
 {
+	int i;
+	int cnt = 0;
+	for (i = 0; i < size_str; i++)
+	{
+		cnt = str[i] - 'A';
+		sort[cnt].data = str[i];
+		sort[cnt].weight++;
+	}
+}
 
+void sortlist(snode sort[])
+{
+	int i, j;
+	for (i = 0; i < (4 - 1); i++)
+	{
+		for (j = 0; j < (3-i); j++)
+		{
+			if (sort[j].weight > sort[j + 1].weight)
+			{
+				snode tmp = { 0 };
+				tmp = sort[j];
+				sort[j] = sort[j + 1];
+				sort[j + 1] = tmp;
+			}
+		}
+	}
 }
