@@ -20,7 +20,8 @@ float cal_percent(char str[], int size_str, char target);
 node* create_node(char data, int weight);
 void weightlist(char str[], snode sort[], int size_str);
 void sortlist(snode sort[]);
-
+node* Huffman(snode sort[]);
+void inorder(node* root);
 int main()
 {
 	//宣告
@@ -32,12 +33,15 @@ int main()
 
 	sortlist(sort);
 
-	int i;
-	for (i = 0; i < 4; i++)
-	{
-		printf("%c %d\n", sort[i].data, sort[i].weight);
-	}
+	//int i;
+	//for (i = 0; i < 4; i++)
+	//{
+	//	printf("%c %d\n", sort[i].data, sort[i].weight);
+	//}
 
+	node* root = Huffman(sort);
+
+	inorder(root);
 
 	return 0;
 }
@@ -103,4 +107,39 @@ void sortlist(snode sort[])
 			}
 		}
 	}
+}
+
+node* Huffman(snode sort[])
+{
+	node* newnode = NULL;
+	node* list[4] = { 0 };
+	int i;
+	for (i = 0; i < 4; i++)
+	{
+		list[i] = create_node(sort[i].data, sort[i].weight);
+	}
+
+
+
+	for (i = 0; i < 3; i++)
+	{
+		int weight_newnode = list[i]->weight + list[i + 1]->weight;
+		newnode = create_node('#', weight_newnode);
+		newnode->right = list[i + 1];
+		newnode->left = list[i];
+
+		list[i + 1] = newnode;
+	}
+
+	return newnode;
+}
+
+void inorder(node* root)
+{
+	if (root == NULL)
+		return;
+
+	inorder(root->left);
+	printf("%c(%d) ", root->data, root->weight);
+	inorder(root->right);
 }

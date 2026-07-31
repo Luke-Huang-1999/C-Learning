@@ -1,4 +1,3 @@
 ﻿  Huffman Tree.c
-C:\Users\USER\Desktop\C語言\C-Learning\Huffman Tree\Huffman Tree.c(58,24): warning C4244: '=': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
-C:\Users\USER\Desktop\C語言\C-Learning\Huffman Tree\Huffman Tree.c(88,2): warning C4098: 'weightlist': 'void' 函式正在傳回值
+C:\Users\USER\Desktop\C語言\C-Learning\Huffman Tree\Huffman Tree.c(62,24): warning C4244: '=': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
   Huffman Tree.vcxproj -> C:\Users\USER\Desktop\C語言\C-Learning\Huffman Tree\x64\Debug\Huffman Tree.exe

@@ -9,6 +9,16 @@ typedef struct HuffmanNode
 	
 }snode;
 
+typedef struct Huffman
+{
+	char data;                  // 字元
+	int weight;                 // 權重(出現次數)
+	struct Huffman* right;
+	struct Huffman* left;
+}node;
+
+node* create_node(char data, int weight);
+
 int main()
 {
 	char str[] = "ACBABAADA";
@@ -29,6 +39,29 @@ int main()
 		printf("%c %d\n", sort[i].data, sort[i].weight);
 	}
 
+	for (i = 0; i < 4; i++)
+	{
+		node* Huffman[4] = { 0 };
+		node* newnode = 
+		Huffman[i] = 
+	}
+
 	return 0;
 }
 
+node* create_node(char data, int weight)
+{
+	node* newnode = (node*)malloc(sizeof(node));
+	if (newnode == NULL)
+	{
+		printf("failed.\n");
+		exit(1);
+	}
+
+	newnode->data = data;
+	newnode->weight = weight;
+	newnode->right = NULL;
+	newnode->left = NULL;
+
+	return newnode;
+}
