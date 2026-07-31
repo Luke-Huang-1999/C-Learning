@@ -1,86 +1,134 @@
-#define _CRT_SECURE_NO_WARNINGS
+﻿#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
-int day_find(int, int);//尋找year_now的1月1日星期幾
+
+typedef struct node
+{
+	char day;
+	char name[10];
+}node;
+
+
+void recieve_data(int* year, int* month);
+//(回傳當年當月的1號星期幾)蔡勒公式(年份, 月份)
+int Zeller(int year, int month);
+//()建立月曆(當年當月的1號星期幾)
+void calendar(int year, int month);
+//(回傳當月天數)計算當月天數(年份, 月份)
+int month_days(int year, int month);
+
+// A/B/C三人，做三休一
+
 int main()
 {
-	int year_now;
-	int month_now;
-	printf("請入今年年份與月份：");
-	scanf("%d %d", &year_now, &month_now);
-
-	day_find(year_now, month_now);
-
+	int year, month;
+	year = 2026;
+	month = 1;
+	recieve_data(&year, &month);
+	calendar(year,month);
 
 	return 0;
 }
 
-int day_find(int year_now, int month_now)
+void recieve_data(int* year, int* month)
 {
-	int start = 2000;//起始年份
-	int end = year_now - 1;//結束不包含year_now
-	int year = start;//從2000年開始
-	int loop = 1;//每次年份增加1年
-	int leap_cnt = 0;//紀錄閏年數量
-	int not_leap_cnt = 0;//紀錄非閏年數量
-	int year_now_day = 0;//year_now年1月1日星期幾
-	int month_now_day = 0;//year_now年month_now月1日星期幾
-	int month = 1;
-	while (year <= end)
+	printf("請輸入年份與月份：");
+	scanf("%d %d", year, month);
+
+}
+
+int Zeller(int year, int month)
+{
+	//q = 日期（day） m = 月份（3~14） K = 年份後兩位 J = 世紀
+	int input_year = year;
+	int input_month = month;
+	
+	int day = 1;
+	int year_ar = 0;
+	int century = 0;
+	int Zeller_week = 0;
+	int week = 0;
+	if (month == 1 || month == 2)
 	{
-		if (year % 4 == 0)//閏年一定可以被4整除
-		{
-			leap_cnt++;
-			if (year % 100 == 0 && year % 400 != 0)//再扣掉能被 100 整除，但不能被 400 整除的年份
-				leap_cnt--;
-		}
-		year = start + loop;
-		loop++;
+		month = month + 12;
+		year = year - 1;
 	}
-	//開始尋找year_now的1月1日星期幾
-	not_leap_cnt = (year_now - start) - leap_cnt;
-	year_now_day = (5 + (leap_cnt * 2) + (not_leap_cnt * 1) + 1) % 7;
-	//printf("%4d/01/01 星期%d\n", year_now, year_now_day);
 
-	//開始尋找year_now年month_now月1日星期幾
+	year_ar = year % 100;
+	century = year / 100;
+	Zeller_week = (day + (13 * (month + 1)) / 5 + year_ar + (year_ar / 4) + (century / 4) + (5 * century)) % 7;
 
-	int leap;
-	if (year % 4 == 0)//閏年一定可以被4整除
+	week = (Zeller_week + 5) % 7 + 1;
+
+	//printf("%4d/%2d/%2d week = %d\n", input_year, input_month, day, week);
+
+	return week;
+}
+
+void calendar(int year, int month)
+{
+	int week = Zeller(year, month);
+	//星期標題建立
+	char all_week[7][10] = { "Mon","Tue","Wed" ,"Thu" ,"Fri" ,"Sat" ,"Sun" };
+	int i;
+	for (i = 0; i < 7; i++)
 	{
-		if (year % 100 == 0 && year % 400 != 0)//再扣掉能被 100 整除，但不能被 400 整除的年份，不是閏年
-			leap = 0;
-		else//是閏年
-			leap = 1;
+		printf("%5s", all_week[i]);
 	}
-	else
-		leap = 0;
-	//大1/3/5/7/10/12
-	//小2/4/6/8/9/11
+	printf("\n");
 
-	int i = year_now_day;
-	while (month <= month_now)
+	int day_cnt = 1;
+	int week_cnt = 1;
+	int max_day = month_days(year, month);
+	while (day_cnt <= max_day)
 	{
-		if (month_now == 1)
+		for (i = 1; i <= 7; i++)//符合週一到周日，1~7
 		{
-			month_now_day = year_now_day;
-			printf("%4d年%d月1日 星期%d\n", year_now, month_now, month_now_day);
-			break;
-		}
-		else
-		{
-			if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12)
-				i = i + 2;
-			else if (month == 2)
-			{
-				if (leap == 1)
-					i = i - 1;
-				else
-					i = i;
-			}
+			if (i < (week) && week_cnt == 1)
+				printf("%5s", " ");
 			else
-				i = i + 1;
-			month++;
+			{
+				printf("%5d", day_cnt);
+				day_cnt++;
+
+			}
+			if (day_cnt > max_day)
+				break;
 		}
+		week_cnt++;
+		printf("\n");
 	}
-	month_now_day = (i % 7) + 1;
-	printf("%4d年%d月1日 星期%d\n", year_now, month_now, month_now_day);
+}
+
+int month_days(int year, int month)
+{
+	int days;
+
+	switch (month)
+	{
+	case 1:
+	case 3:
+	case 5:
+	case 7:
+	case 8:
+	case 10:
+	case 12:
+		days = 31;
+		break;
+
+	case 4:
+	case 6:
+	case 9:
+	case 11:
+		days = 30;
+		break;
+
+	case 2:
+		if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0)
+			days = 29;
+		else
+			days = 28;
+		break;
+	}
+
+	return days;
 }
