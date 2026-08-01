@@ -39,7 +39,7 @@ int month_days(int year, int month);
 //()列印月曆(node型態的二維矩陣)
 void print_calendar_console(node cale[CAL_ROWS][CAL_COLS]);
 
-
+void modify_cale(node cale[CAL_ROWS][CAL_COLS], char employee_all[EMPLOYEE_NUMS][NAME_LEN], int date, int work_day);
 
 int main()
 {
@@ -254,3 +254,8 @@ void print_calendar_console(node cale[CAL_ROWS][CAL_COLS])
 	}
 }
 
+void modify_cale(node cale[CAL_ROWS][CAL_COLS], char employee_all[EMPLOYEE_NUMS][NAME_LEN], int date, int work_day)
+{
+
+
+}
