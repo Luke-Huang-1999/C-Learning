@@ -2,66 +2,26 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-typedef struct HuffmanNode
-{
-	char data;                  // 字元
-	int weight;                 // 權重(出現次數)
-	
-}snode;
-
-typedef struct Huffman
-{
-	char data;                  // 字元
-	int weight;                 // 權重(出現次數)
-	struct Huffman* right;
-	struct Huffman* left;
-}node;
-
-node* create_node(char data, int weight);
-
 int main()
 {
-	char str[] = "ACBABAADA";
-	int size_str = sizeof(str) - 1;
-	snode sort[4] = { 0 };
-
-	int i;
-	int num = 0;
-	for (i = 0; i < size_str; i++)
+	char employee_all[4][15] = { "AAAAA","BBBBB","CCCCC" ,"DDDDD" };
+	int day = 1;
+	int day_max = 10;
+	int employee_source_1 = 0;
+	int employee_source_2 = 0;
+	while (day <= day_max)
 	{
-		num = str[i] - 'A';
-		sort[num].data = str[i];
-		sort[num].weight++;
-	}
+		printf("第%d天\n", day);
 
-	for (i = 0; i < 4; i++)
-	{
-		printf("%c %d\n", sort[i].data, sort[i].weight);
-	}
 
-	for (i = 0; i < 4; i++)
-	{
-		node* Huffman[4] = { 0 };
-		node* newnode = 
-		Huffman[i] = 
+		employee_source_1 = (day / 4) / 4;
+		employee_source_2 = (2 + day / 4) / 4;
+
+		printf("%s ", employee_all[employee_source_1]);
+		printf("%s ", employee_all[employee_source_2]);
+		day++;
+		printf("\n");
 	}
 
 	return 0;
-}
-
-node* create_node(char data, int weight)
-{
-	node* newnode = (node*)malloc(sizeof(node));
-	if (newnode == NULL)
-	{
-		printf("failed.\n");
-		exit(1);
-	}
-
-	newnode->data = data;
-	newnode->weight = weight;
-	newnode->right = NULL;
-	newnode->left = NULL;
-
-	return newnode;
 }
