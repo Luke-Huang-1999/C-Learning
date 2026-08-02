@@ -1,0 +1,45 @@
+ date week                           Day                       Evening                         Night                       Day-off                         Leave
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+                  DM     Brine       HCl        DM     Brine       HCl        DM     Brine       HCl        DM     Brine       HCl        DM     Brine       HCl
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 8/ 1  Sat     Alice     Bruce     Carol     David     Eason     Frank      Grog      Hank      Iris   Jackson       Ken     Louis
+ 8/ 2  Sun     Alice     Bruce     Carol     David     Eason     Frank      Grog      Hank      Iris   Jackson       Ken     Louis
+ 8/ 3  Mon     Alice     Bruce     Carol     David     Eason     Frank   Jackson       Ken     Louis      Grog      Hank      Iris
+ 8/ 4  Tue     Alice     Bruce     Carol     David     Eason     Frank   Jackson       Ken     Louis      Grog      Hank      Iris
+ 8/ 5  Wed     Alice     Bruce     Carol      Grog      Hank      Iris   Jackson       Ken     Louis     David     Eason     Frank
+ 8/ 6  Thu     Alice     Bruce     Carol      Grog      Hank      Iris   Jackson       Ken     Louis     David     Eason     Frank
+ 8/ 7  Fri     David     Eason     Frank      Grog      Hank      Iris   Jackson       Ken     Louis     Alice     Bruce     Carol
+ 8/ 8  Sat     David     Eason     Frank      Grog      Hank      Iris   Jackson       Ken     Louis     Alice     Bruce     Carol
+ 8/ 9  Sun     David     Eason     Frank      Grog      Hank      Iris     Alice     Bruce     Carol   Jackson       Ken     Louis
+ 8/10  Mon     David     Eason     Frank      Grog      Hank      Iris     Alice     Bruce     Carol   Jackson       Ken     Louis
+ 8/11  Tue     David     Eason     Frank   Jackson       Ken     Louis     Alice     Bruce     Carol      Grog      Hank      Iris
+ 8/12  Wed     David     Eason     Frank   Jackson       Ken     Louis     Alice     Bruce     Carol      Grog      Hank      Iris
+ 8/13  Thu      Grog      Hank      Iris   Jackson       Ken     Louis     Alice     Bruce     Carol     David     Eason     Frank
+ 8/14  Fri      Grog      Hank      Iris   Jackson       Ken     Louis     Alice     Bruce     Carol     David     Eason     Frank
+ 8/15  Sat      Grog      Hank      Iris   Jackson       Ken     Louis     David     Eason     Frank     Alice     Bruce     Carol
+ 8/16  Sun      Grog      Hank      Iris   Jackson       Ken     Louis     David     Eason     Frank     Alice     Bruce     Carol
+ 8/17  Mon      Grog      Hank      Iris     Alice     Bruce     Carol     David     Eason     Frank   Jackson       Ken     Louis
+ 8/18  Tue      Grog      Hank      Iris     Alice     Bruce     Carol     David     Eason     Frank   Jackson       Ken     Louis
+ 8/19  Wed   Jackson       Ken     Louis     Alice     Bruce     Carol     David     Eason     Frank      Grog      Hank      Iris
+ 8/20  Thu   Jackson       Ken     Louis     Alice     Bruce     Carol     David     Eason     Frank      Grog      Hank      Iris
+ 8/21  Fri   Jackson       Ken     Louis     Alice     Bruce     Carol      Grog      Hank      Iris     David     Eason     Frank
+ 8/22  Sat   Jackson       Ken     Louis     Alice     Bruce     Carol      Grog      Hank      Iris     David     Eason     Frank
+ 8/23  Sun   Jackson       Ken     Louis     David     Eason     Frank      Grog      Hank      Iris     Alice     Bruce     Carol
+ 8/24  Mon   Jackson       Ken     Louis     David     Eason     Frank      Grog      Hank      Iris     Alice     Bruce     Carol
+ 8/25  Tue     Alice     Bruce     Carol     David     Eason     Frank      Grog      Hank      Iris   Jackson       Ken     Louis
+ 8/26  Wed     Alice     Bruce     Carol     David     Eason     Frank      Grog      Hank      Iris   Jackson       Ken     Louis
+ 8/27  Thu     Alice     Bruce     Carol     David     Eason     Frank   Jackson       Ken     Louis      Grog      Hank      Iris
+ 8/28  Fri     Alice     Bruce     Carol     David     Eason     Frank   Jackson       Ken     Louis      Grog      Hank      Iris
+ 8/29  Sat     Alice     Bruce     Carol      Grog      Hank      Iris   Jackson       Ken     Louis     David     Eason     Frank
+ 8/30  Sun     Alice     Bruce     Carol      Grog      Hank      Iris   Jackson       Ken     Louis     David     Eason     Frank
+ 8/31  Mon     David     Eason     Frank      Grog      Hank      Iris   Jackson       Ken     Louis     Alice     Bruce     Carol
+
+
+
+
+
+
+
+
+
+

@@ -1,14 +1,16 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #define CAL_ROWS 6			//6行
 #define CAL_COLS 7			//一週7天
-#define EMPLOYEE_NUMS 6		//員工人數
-#define WORK_DAY_MAX 3		//最多連續做幾天
+#define EMPLOYEE_NUMS 8		//員工人數
+#define DM_NUMS 4			//值班主管人數
+#define WORK_DAY_MAX 6		//最多連續做幾天
 #define EMPTY_DAY 0			//月曆中空白日的賦值
 #define SHIFT_NUMS 3		//班別(早班午班晚班)
-#define NAME_LEN 20			//員工名字長度限制20bytes
+#define NAME_LEN 10			//員工名字長度限制20bytes
 
 typedef struct node
 {
@@ -18,28 +20,61 @@ typedef struct node
 	//int work_day_2;
 }node;
 
+typedef struct data
+{
+	int month;
+	int day;
+	char week[5];
+	char DS_DM[10];
+	char DS_B[10];
+	char DS_H[10];
+	char ES_DM[10];
+	char ES_B[10];
+	char ES_H[10];
+	char NS_DM[10];
+	char NS_B[10];
+	char NS_H[10];
+	char DO_DM[10];
+	char DO_B[10];
+	char DO_H[10];
+	char LEAVE_DS[10];
+	char LEAVE_ES[10];
+	char LEAVE_NS[10];
+	struct data* next;
+}list;
+
 typedef struct employinfo
 {
 	char employee[10];
 	int day;
 }epinfo;
 
-char employee_all[EMPLOYEE_NUMS][NAME_LEN] = {"Alice","Bruce","Carol" ,"David","Eason","Frank"};
+char employee_all[EMPLOYEE_NUMS][NAME_LEN] = { "Bruce","Carol" ,"Eason","Frank","Hank","Iris","Ken","Louis" };
+char dm_all[DM_NUMS][NAME_LEN] = { "Alice" ,"David","Grog","Jackson" };
+char shift[3][15] = { "Day","Evening" ,"Night" };
+char parts[3][15] = { "DM","Brine","HCl" };
+char all_week[7][5] = { "Mon","Tue","Wed" ,"Thu" ,"Fri" ,"Sat" ,"Sun" };
 
-void receive_data(int* year, int* month);
+void receive_data(int* year, int* month, int* ds_dm_index, int* ds_dm_workday);
 //(回傳當年當月的1號星期幾)蔡勒公式(年份, 月份)
 
 int Zeller(int year, int month);
 //()建立月曆(當年當月的1號星期幾)
-void create_calendar(int year, int month, node cale[CAL_ROWS][CAL_COLS]);
+void create_calendar_chart(int year, int month, node cale[CAL_ROWS][CAL_COLS]);
+
+//()建立月曆(當年當月的1號星期幾)
+list* create_calendar_list_console(int year, int month, node cale[CAL_ROWS][CAL_COLS], int ds_dm_index, int ds_dm_workday);
+
+//()列印月曆(月曆的首指標)
+void print_calendar_list_console(list* head);
 
 //(回傳當月天數)計算當月天數(年份, 月份)
 int month_days(int year, int month);
 
 //()列印月曆(node型態的二維矩陣)
-void print_calendar_console(node cale[CAL_ROWS][CAL_COLS]);
+void print_calendar_chart_console(node cale[CAL_ROWS][CAL_COLS]);
 
-void modify_cale(node cale[CAL_ROWS][CAL_COLS], char employee_all[EMPLOYEE_NUMS][NAME_LEN], int date, int work_day);
+list* create_list(int month, int day, char week[5], char DS_DM[10], char DS_B[10], char DS_H[10], char ES_DM[10], char ES_B[10], char ES_H[10], char NS_DM[10], char NS_B[10], char NS_H[10], char DO_DM[10], char DO_B[10], char DO_H[10], char LEAVE_DS[10], char LEAVE_ES[10], char LEAVE_NS[10]);
 
 int main()
 {
@@ -48,26 +83,39 @@ int main()
 	node cale[CAL_ROWS][CAL_COLS] = { 0 };
 	year = 2026;
 	month = 8;
-
+	int ds_dm_index = 0;
+	int ds_dm_workday = 4;
 	//1.接收初始資訊
-	//receive_data(&year, &month);	//年月
+	//receive_data(&year, &month,&ds_dm_index,&ds_dm_workday);
 
 	//生成月曆
-	create_calendar(year, month, cale);
-
+	//create_calendar_chart(year, month, cale);
+	list* head = create_calendar_list_console(year, month, cale, ds_dm_index, ds_dm_workday);
 	//列印月曆
-	print_calendar_console(cale);
-
+	//print_calendar_chart_console(cale);
+	print_calendar_list_console(head);
 
 	//system("pause");
 
 	return 0;
 }
 
-void receive_data(int* year, int* month)
+void receive_data(int* year, int* month, int* ds_dm_index, int* ds_dm_workday)
 {
-	printf("請輸入年份與月份：");
+	printf("請輸入年份與月份：(例如 ==> 2026 8)\n");
 	scanf("%d %d", year, month);
+
+	printf("\n");
+
+	printf("[0]Alice [1]David [2]Grog [3]Jackson\n");
+	printf("請輸入第一天早班主管編號：(例如==> 1)\n");
+	scanf("%d", ds_dm_index);
+
+	printf("\n");
+
+	printf("請輸入第一天早班主管值班第N天：(例如==> 1)\n");
+	scanf("%d", ds_dm_workday);
+
 }
 
 int Zeller(int year, int month)
@@ -91,14 +139,14 @@ int Zeller(int year, int month)
 	century = year / 100;
 	Zeller_week = (day + (13 * (month + 1)) / 5 + year_ar + (year_ar / 4) + (century / 4) + (5 * century)) % 7;
 
-	week = (Zeller_week + 5) % 7 + 1;
+	week = (Zeller_week + 5) % 7;
 
 	//printf("%4d/%2d/%2d week = %d\n", input_year, input_month, day, week);
 
 	return week;
 }
 
-void create_calendar(int year, int month, node cale[CAL_ROWS][CAL_COLS])
+void create_calendar_chart(int year, int month, node cale[CAL_ROWS][CAL_COLS])
 {
 	int week = Zeller(year, month); //6
 	int i, j;
@@ -170,6 +218,166 @@ void create_calendar(int year, int month, node cale[CAL_ROWS][CAL_COLS])
 
 }
 
+list* create_calendar_list_console(int year, int month, node cale[CAL_ROWS][CAL_COLS], int ds_dm_index, int ds_dm_workday)
+{
+	int i;
+	//建立標題
+	printf("%5s%5s%30s%30s%30s%30s%30s\n", "date", "week", shift[0], shift[1], shift[2], "Day-off", "Leave");
+	for (i = 0; i < 160; i++)
+		printf("-");
+	printf("\n");
+	printf("%10s", " ");
+	for (i = 0; i < 4; i++)
+	{
+		printf("%10s%10s%10s", parts[0], parts[1], parts[2]);
+	}
+	printf("%10s%10s%10s\n", parts[0], parts[1], parts[2]);
+	for (i = 0; i < 160; i++)
+		printf("-");
+	printf("\n");
+
+	int week = Zeller(year, month); //第一天星期幾 6[5]
+	int day_max = month_days(year, month);//總天數
+	int day_cnt = 1;//天數紀錄
+	//int ds_dm_workday = 1;//早班主管連續天數
+	int es_dm_workday = (ds_dm_workday + 1) % 6 + 1;//午班主管連續天數3
+	int ns_dm_workday = (ds_dm_workday + 3) % 6 + 1;//晚班主管連續天數5
+	int do_dm_workday = (ds_dm_workday % 2 != 0) ? 5 : 6;//輪休主管連續天數5
+	//int ds_dm_index = 0;//早班主管係數
+	int es_dm_index = (ds_dm_index + 1) % 4;//午班主管係數1
+	int ns_dm_index = (ds_dm_index + 2) % 4;//晚班主管係數2
+	int do_dm_index = (ds_dm_index + 3) % 4;//輪休主管係數3
+
+	int ds_employee_workday = ds_dm_workday;//早班員工連續天數
+	int es_employee_workday = (ds_dm_workday + 1) % 6 + 1;//午班員工連續天數
+	int ns_employee_workday = (ds_dm_workday + 3) % 6 + 1;//晚班員工連續天數
+	int do_employee_workday = (ds_dm_workday % 2 != 0) ? 5 : 6;//輪休員工連續天數
+	int ds_employee_index = ds_dm_index;//早班員工係數0
+	int es_employee_index = (ds_dm_index + 2) % 7;//午班員工係數2
+	int ns_employee_index = (ds_dm_index + 4) % 7;//晚班員工係數4
+	int do_employee_index = (ds_dm_index + 6) % 7;//輪休員工係數6
+
+	list* head = NULL;//開頭指標指向1號
+	list* current = NULL;
+	list* newnode = NULL;
+
+	while (day_cnt <= day_max)
+	{
+		newnode = create_list(month,
+			day_cnt,
+			all_week[(week++) % CAL_COLS],
+			dm_all[(ds_dm_index) % DM_NUMS],						//早班
+			employee_all[(ds_employee_index) % EMPLOYEE_NUMS],
+			employee_all[(ds_employee_index + 1) % EMPLOYEE_NUMS],
+			dm_all[(es_dm_index) % DM_NUMS],						//午班
+			employee_all[(es_employee_index) % EMPLOYEE_NUMS],
+			employee_all[(es_employee_index + 1) % EMPLOYEE_NUMS],
+			dm_all[(ns_dm_index) % DM_NUMS],						//晚班
+			employee_all[(ns_employee_index) % EMPLOYEE_NUMS],
+			employee_all[(ns_employee_index + 1) % EMPLOYEE_NUMS],
+			dm_all[(do_dm_index) % DM_NUMS],						//輪休
+			employee_all[(do_employee_index) % EMPLOYEE_NUMS],
+			employee_all[(do_employee_index + 1) % EMPLOYEE_NUMS],
+			" ",
+			" ",
+			" "
+		);
+		ds_dm_workday++;
+		es_dm_workday++;
+		ns_dm_workday++;
+		do_dm_workday++;
+		ds_employee_workday++;
+		es_employee_workday++;
+		ns_employee_workday++;
+		do_employee_workday++;
+
+
+		if (do_dm_workday > WORK_DAY_MAX)
+		{
+			do_dm_workday = 5;
+			do_dm_index--;
+		}
+
+		if (ds_dm_workday > WORK_DAY_MAX)
+		{
+			ds_dm_workday = 1;
+			do_dm_index = ds_dm_index;
+			ds_dm_index++;
+		}
+
+		if (es_dm_workday > WORK_DAY_MAX)
+		{
+			es_dm_workday = 1;
+			do_dm_index = es_dm_index;
+			es_dm_index++;
+		}
+
+		if (ns_dm_workday > WORK_DAY_MAX)
+		{
+			ns_dm_workday = 1;
+			do_dm_index = ns_dm_index;
+			ns_dm_index++;
+		}
+		//+++++++++++++++++++++++++++++++++++++++++++++
+		if (do_employee_workday > WORK_DAY_MAX)
+		{
+			do_employee_workday = 5;
+			do_employee_index -= 2;
+		}
+		if (ds_employee_workday > WORK_DAY_MAX)
+		{
+			ds_employee_workday = 1;
+			do_employee_index = ds_employee_index;
+			ds_employee_index += 2;
+		}
+
+		if (es_employee_workday > WORK_DAY_MAX)
+		{
+			es_employee_workday = 1;
+			do_employee_index = es_employee_index;
+			es_employee_index += 2;
+		}
+
+		if (ns_employee_workday > WORK_DAY_MAX)
+		{
+			ns_employee_workday = 1;
+			do_employee_index = ns_employee_index;
+			ns_employee_index += 2;
+		}
+
+		if (head == NULL)
+			head = newnode;
+		else
+			current->next = newnode;
+
+		current = newnode;
+		day_cnt++;
+	}
+	return head;
+}
+
+void print_calendar_list_console(list* head)
+{
+	if (head == NULL)
+	{
+		printf("calendar list is not exit.\n");
+		exit(1);
+	}
+	list* current = head;
+	while (current != NULL)
+	{
+		printf("%2d/%2d%5s", current->month, current->day, current->week);
+		printf("%10s%10s%10s", current->DS_DM, current->DS_B, current->DS_H);
+		printf("%10s%10s%10s", current->ES_DM, current->ES_B, current->ES_H);
+		printf("%10s%10s%10s", current->NS_DM, current->NS_B, current->NS_H);
+		printf("%10s%10s%10s", current->DO_DM, current->DO_B, current->DO_H);
+		printf("%10s%10s%10s", current->LEAVE_DS, current->LEAVE_ES, current->LEAVE_NS);
+		printf("\n");
+		current = current->next;
+	}
+
+}
+
 int month_days(int year, int month)
 {
 	int days = 0;
@@ -207,10 +415,9 @@ int month_days(int year, int month)
 	return days;
 }
 
-void print_calendar_console(node cale[CAL_ROWS][CAL_COLS])
+void print_calendar_chart_console(node cale[CAL_ROWS][CAL_COLS])
 {
 	//星期標題建立
-	char all_week[7][4] = { "Mon","Tue","Wed" ,"Thu" ,"Fri" ,"Sat" ,"Sun" };
 	int i, j;
 	for (i = 0; i < 7; i++)
 	{
@@ -250,12 +457,38 @@ void print_calendar_console(node cale[CAL_ROWS][CAL_COLS])
 				printf("%15s", " ");
 		}
 		printf("\n\n");
-		
+
 	}
 }
 
-void modify_cale(node cale[CAL_ROWS][CAL_COLS], char employee_all[EMPLOYEE_NUMS][NAME_LEN], int date, int work_day)
+list* create_list(int month, int day, char week[5], char DS_DM[10], char DS_B[10], char DS_H[10], char ES_DM[10], char ES_B[10], char ES_H[10], char NS_DM[10], char NS_B[10], char NS_H[10], char DO_DM[10], char DO_B[10], char DO_H[10], char LEAVE_DS[10], char LEAVE_ES[10], char LEAVE_NS[10])
 {
+	list* newnode = (list*)malloc(sizeof(list));
+	if (newnode == NULL)
+	{
+		printf("Failed to created list.\n");
+		exit(1);
+	}
 
-
+	//初始化
+	newnode->month = month;
+	newnode->day = day;
+	strcpy(newnode->week, week);
+	strcpy(newnode->DS_DM, DS_DM);
+	strcpy(newnode->DS_B, DS_B);
+	strcpy(newnode->DS_H, DS_H);
+	strcpy(newnode->ES_DM, ES_DM);
+	strcpy(newnode->ES_B, ES_B);
+	strcpy(newnode->ES_H, ES_H);
+	strcpy(newnode->NS_DM, NS_DM);
+	strcpy(newnode->NS_B, NS_B);
+	strcpy(newnode->NS_H, NS_H);
+	strcpy(newnode->DO_DM, DO_DM);
+	strcpy(newnode->DO_B, DO_B);
+	strcpy(newnode->DO_H, DO_H);
+	strcpy(newnode->LEAVE_DS, LEAVE_DS);
+	strcpy(newnode->LEAVE_ES, LEAVE_ES);
+	strcpy(newnode->LEAVE_NS, LEAVE_NS);
+	newnode->next = NULL;
+	return newnode;
 }

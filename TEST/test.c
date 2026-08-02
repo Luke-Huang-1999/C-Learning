@@ -4,24 +4,15 @@
 
 int main()
 {
-	char employee_all[4][15] = { "AAAAA","BBBBB","CCCCC" ,"DDDDD" };
-	int day = 1;
-	int day_max = 10;
-	int employee_source_1 = 0;
-	int employee_source_2 = 0;
-	while (day <= day_max)
+
+	int a = 1;
+	int b = 0;
+	if (a % 2 != 0)
 	{
-		printf("第%d天\n", day);
-
-
-		employee_source_1 = (day / 4) / 4;
-		employee_source_2 = (2 + day / 4) / 4;
-
-		printf("%s ", employee_all[employee_source_1]);
-		printf("%s ", employee_all[employee_source_2]);
-		day++;
-		printf("\n");
+		b = 1;
 	}
+	else
+		b = 2;
 
 	return 0;
 }
