@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\USER\\Desktop\\C\u8A9E\u8A00\\C-Learning\\Sorting_types\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{9EDA6B5B-B38A-405B-B224-6E5961656B82}|Sorting_types.vcxproj|C:\\Users\\USER\\Desktop\\C\u8A9E\u8A00\\C-Learning\\Sorting_types\\Sorting_types.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{9EDA6B5B-B38A-405B-B224-6E5961656B82}|Sorting_types.vcxproj|solutionrelative:Sorting_types.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Sorting_types.c",
+              "DocumentMoniker": "C:\\Users\\USER\\Desktop\\C\u8A9E\u8A00\\C-Learning\\Sorting_types\\Sorting_types.c",
+              "RelativeDocumentMoniker": "Sorting_types.c",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\C\u8A9E\u8A00\\C-Learning\\Sorting_types\\Sorting_types.c*",
+              "RelativeToolTip": "Sorting_types.c*",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAmwCMAAABCAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2026-08-04T05:50:45.136Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
