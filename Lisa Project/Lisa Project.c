@@ -3,14 +3,15 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define CAL_ROWS 6			//6行
-#define CAL_COLS 7			//一週7天
-#define EMPLOYEE_NUMS 8		//員工人數
-#define DM_NUMS 4			//值班主管人數
-#define WORK_DAY_MAX 6		//最多連續做幾天
-#define EMPTY_DAY 0			//月曆中空白日的賦值
-#define SHIFT_NUMS 3		//班別(早班午班晚班)
-#define NAME_LEN 10			//員工名字長度限制20bytes
+#define CAL_ROWS 6						//6行
+#define CAL_COLS 7						//一週7天
+#define EMPLOYEE_NUMS 8					//員工人數
+#define DM_NUMS 4						//值班主管人數
+#define WORK_DAY_MAX 6					//最多連續做幾天
+#define EMPTY_DAY 0						//月曆中空白日的賦值
+#define SHIFT_NUMS 3					//班別(早班午班晚班)
+#define NAME_LEN 10						//員工名字長度限制20bytes
+#define working_hours_per_day 8.0		//一日工時
 
 typedef struct node
 {
@@ -85,6 +86,8 @@ void salary_settlement(list* head, int year, int month);
 //()生成員工資料節點()
 epinfo* create_epinfo(char employee[NAME_LEN], int work_time);
 
+//()請假系統()
+void operation_system(list* head, int year, int month);
 
 int main()
 {
@@ -95,17 +98,21 @@ int main()
 	month = 8;
 	int ds_dm_index = 2;
 	int ds_dm_workday = 4;
+	int personal_leave = 0;
 	//1.接收初始資訊
 	receive_data(&year, &month,&ds_dm_index,&ds_dm_workday);
 
 	//生成月曆
 	list* head = create_calendar_list_console(year, month, cale, ds_dm_index, ds_dm_workday);
 
+	//請假系統介入
+	//operation_system(head, year, month);
+
 	//列印月曆
 	print_calendar_list_console(head);
 
 	//薪資計算
-	salary_settlement(head, year, month);
+	//salary_settlement(head, year, month);
 	system("pause");
 
 	return 0;
@@ -545,13 +552,23 @@ void salary_settlement(list* head, int year, int month)
 		}
 		current = current->next;
 	}
+	current = head;
+
+	//工作天數乘工時
 	for (i = 0; i < DM_NUMS; i++)
 	{
-		dm_salary[i].work_time = dm_salary[i].work_time * 8.0;
+		dm_salary[i].work_time = dm_salary[i].work_time * working_hours_per_day;
 	}
 
 
-	//employee薪資計算
+	//employee_1薪資計算
+	for (i = 0; i < DM_NUMS; i++)
+	{
+		employee_salary[i * 2].work_time = dm_salary[i].work_time;
+		employee_salary[i * 2 + 1].work_time = dm_salary[i].work_time;
+	}
+
+	//employee_2薪資計算
 	for (i = 0; i < DM_NUMS; i++)
 	{
 		employee_salary[i * 2].work_time = dm_salary[i].work_time;
@@ -585,4 +602,34 @@ epinfo* create_epinfo(char employee[NAME_LEN], int work_time)
 	newnode->work_time = work_time;
 
 	return newnode;
+}
+
+void operation_system(list* head, int year, int month)
+{
+	int mode;
+	while (1)
+	{
+		printf("操作系統選擇：[0]=>請假系統   [1]=>工資結算系統   [2]結束");
+		scanf("%d", &mode);
+		if(mode < 0 || mode > 2)
+		{
+			printf("輸入錯誤，請再輸入一次。\n");
+			continue;
+		}
+
+		if (mode == 2)
+		{
+			printf("程式結束。\n");
+			break;
+		}
+		else if (mode == 0)
+		{
+
+		}
+		else if (mode == 1)
+		{
+			salary_settlement(head, year, month);
+		}
+	}
+	
 }
