@@ -45,12 +45,14 @@ typedef struct data
 
 typedef struct employinfo
 {
-	char employee[10];
-	int day;
+	char name[NAME_LEN];
+	float work_time;		//unit:hour
 }epinfo;
 
 char employee_all[EMPLOYEE_NUMS][NAME_LEN] = { "Bruce","Carol" ,"Eason","Frank","Hank","Iris","Ken","Louis" };
 char dm_all[DM_NUMS][NAME_LEN] = { "Alice" ,"David","Grog","Jackson" };
+//char employee_all[EMPLOYEE_NUMS][NAME_LEN] = { "小新","廣志" ,"小葵","小白","風間","阿呆","妮妮","正男" };
+//char dm_all[DM_NUMS][NAME_LEN] = { "維尼" ,"小豬","屹耳","跳跳虎" };
 char shift[3][15] = { "Day","Evening" ,"Night" };
 char parts[3][15] = { "DM","Brine","HCl" };
 char all_week[7][5] = { "Mon","Tue","Wed" ,"Thu" ,"Fri" ,"Sat" ,"Sun" };
@@ -74,7 +76,15 @@ int month_days(int year, int month);
 //()列印月曆(node型態的二維矩陣)
 void print_calendar_chart_console(node cale[CAL_ROWS][CAL_COLS]);
 
+//()生成月曆清單節點(相關資料)
 list* create_list(int month, int day, char week[5], char DS_DM[10], char DS_B[10], char DS_H[10], char ES_DM[10], char ES_B[10], char ES_H[10], char NS_DM[10], char NS_B[10], char NS_H[10], char DO_DM[10], char DO_B[10], char DO_H[10], char LEAVE_DS[10], char LEAVE_ES[10], char LEAVE_NS[10]);
+
+//()工資計算()
+void salary_settlement(list* head, int year, int month);
+
+//()生成員工資料節點()
+epinfo* create_epinfo(char employee[NAME_LEN], int work_time);
+
 
 int main()
 {
@@ -83,19 +93,20 @@ int main()
 	node cale[CAL_ROWS][CAL_COLS] = { 0 };
 	year = 2026;
 	month = 8;
-	int ds_dm_index = 1;
+	int ds_dm_index = 2;
 	int ds_dm_workday = 4;
 	//1.接收初始資訊
-	//receive_data(&year, &month,&ds_dm_index,&ds_dm_workday);
+	receive_data(&year, &month,&ds_dm_index,&ds_dm_workday);
 
 	//生成月曆
-	//create_calendar_chart(year, month, cale);
 	list* head = create_calendar_list_console(year, month, cale, ds_dm_index, ds_dm_workday);
+
 	//列印月曆
-	//print_calendar_chart_console(cale);
 	print_calendar_list_console(head);
 
-	//system("pause");
+	//薪資計算
+	salary_settlement(head, year, month);
+	system("pause");
 
 	return 0;
 }
@@ -220,21 +231,7 @@ void create_calendar_chart(int year, int month, node cale[CAL_ROWS][CAL_COLS])
 
 list* create_calendar_list_console(int year, int month, node cale[CAL_ROWS][CAL_COLS], int ds_dm_index, int ds_dm_workday)
 {
-	int i;
-	//建立標題
-	printf("%5s%5s%30s%30s%30s%30s%30s\n", "date", "week", shift[0], shift[1], shift[2], "Day-off", "Leave");
-	for (i = 0; i < 160; i++)
-		printf("-");
-	printf("\n");
-	printf("%10s", " ");
-	for (i = 0; i < 4; i++)
-	{
-		printf("%10s%10s%10s", parts[0], parts[1], parts[2]);
-	}
-	printf("%10s%10s%10s\n", parts[0], parts[1], parts[2]);
-	for (i = 0; i < 160; i++)
-		printf("-");
-	printf("\n");
+
 
 	int week = Zeller(year, month); //第一天星期幾 6[5]
 	int day_max = month_days(year, month);//總天數
@@ -246,7 +243,7 @@ list* create_calendar_list_console(int year, int month, node cale[CAL_ROWS][CAL_
 	//int ds_dm_index = 0;//早班主管係數
 	int es_dm_index = (ds_dm_index + ((ds_dm_workday <= 4) ? 1 : 2)) % 4;//午班主管係數1
 	int ns_dm_index = (ds_dm_index + ((ds_dm_workday <= 2) ? 2 : 3)) % 4;//晚班主管係數2
-	int do_dm_index = (ds_dm_index + ((ds_dm_workday <= 2) ? 2 : (ds_dm_workday <= 4) ? 2 : 1)) % 4;//輪休主管係數3
+	int do_dm_index = (ds_dm_index + ((ds_dm_workday <= 2) ? 3 : (ds_dm_workday <= 4) ? 2 : 1)) % 4;//輪休主管係數3
 
 	int ds_employee_workday = ds_dm_workday;//早班員工連續天數
 	int es_employee_workday = (ds_dm_workday + 1) % 6 + 1;//午班員工連續天數
@@ -363,6 +360,26 @@ void print_calendar_list_console(list* head)
 		printf("calendar list is not exit.\n");
 		exit(1);
 	}
+	
+	//建立標題
+	int i;
+	printf("%5s%5s%30s%30s%30s%30s%30s\n", "date", "week", shift[0], shift[1], shift[2], "Day-off", "Leave");
+	for (i = 0; i < 160; i++)
+		printf("=");
+	printf("\n");
+	printf("%10s", " ");
+	for (i = 0; i < 5; i++)
+	{
+		printf("%10s%10s%10s", parts[0], parts[1], parts[2]);
+	}
+	printf("\n");
+	//printf("%10s%10s%10s\n", parts[0], parts[1], parts[2]);
+	for (i = 0; i < 160; i++)
+		printf("=");
+	printf("\n");
+
+
+
 	list* current = head;
 	while (current != NULL)
 	{
@@ -373,9 +390,12 @@ void print_calendar_list_console(list* head)
 		printf("%10s%10s%10s", current->DO_DM, current->DO_B, current->DO_H);
 		printf("%10s%10s%10s", current->LEAVE_DS, current->LEAVE_ES, current->LEAVE_NS);
 		printf("\n");
+		//for (i = 0; i < 166; i++)
+		//	printf("-");
+		printf("\n");
 		current = current->next;
 	}
-
+	printf("\n");
 }
 
 int month_days(int year, int month)
@@ -490,5 +510,79 @@ list* create_list(int month, int day, char week[5], char DS_DM[10], char DS_B[10
 	strcpy(newnode->LEAVE_ES, LEAVE_ES);
 	strcpy(newnode->LEAVE_NS, LEAVE_NS);
 	newnode->next = NULL;
+	return newnode;
+}
+
+void salary_settlement(list* head, int year, int month)
+{
+	list* current = head;
+	epinfo dm_salary[DM_NUMS];
+	epinfo employee_salary[EMPLOYEE_NUMS];
+	int max_day = month_days(year, month);
+
+	//初始化
+	int i;
+	for (i = 0; i < DM_NUMS; i++)
+	{
+		strcpy(dm_salary[i].name, dm_all[i]);
+		dm_salary[i].work_time = max_day;
+	}
+	for (i = 0; i < EMPLOYEE_NUMS; i++)
+	{
+		strcpy(employee_salary[i].name, employee_all[i]);
+		employee_salary[i].work_time = 0.0;
+	}
+
+	//dm薪資計算
+	while (current != NULL)
+	{
+		for (i = 0; i < DM_NUMS; i++)
+		{
+			if (strcmp(dm_salary[i].name, current->DO_DM) == 0)
+			{
+				dm_salary[i].work_time--;
+			}
+		}
+		current = current->next;
+	}
+	for (i = 0; i < DM_NUMS; i++)
+	{
+		dm_salary[i].work_time = dm_salary[i].work_time * 8.0;
+	}
+
+
+	//employee薪資計算
+	for (i = 0; i < DM_NUMS; i++)
+	{
+		employee_salary[i * 2].work_time = dm_salary[i].work_time;
+		employee_salary[i * 2 + 1].work_time = dm_salary[i].work_time;
+	}
+
+	//列印
+	printf("工資結算系統：\n");
+	printf("%10s%16s\n", "Name", "work_time");
+	for (i = 0; i < 26; i++)
+		printf("-");
+	printf("\n");
+	for (i = 0; i < DM_NUMS; i++)
+	{
+		printf("%10s%10.2f hours\n", dm_salary[i].name, dm_salary[i].work_time);
+		printf("%10s%10.2f hours\n", employee_salary[i * 2].name, employee_salary[i * 2].work_time);
+		printf("%10s%10.2f hours\n", employee_salary[i * 2 + 1].name, employee_salary[i * 2 + 1].work_time);
+	}
+	//printf("\n");
+}
+
+epinfo* create_epinfo(char employee[NAME_LEN], int work_time)
+{
+	epinfo* newnode = (epinfo*)malloc(sizeof(epinfo));
+	if (newnode == NULL)
+	{
+		printf("create_epinfo is failed.\n");
+		exit(1);
+	}
+	strcpy(newnode->name, employee);
+	newnode->work_time = work_time;
+
 	return newnode;
 }
