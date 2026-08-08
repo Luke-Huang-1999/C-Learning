@@ -1,0 +1,44 @@
+void merge_sort(int arr[], int left, int right)
+{
+	if (left >= right)
+		return;
+
+	int mid = (left + right) / 2;
+
+	merge_sort(arr, left, mid);
+
+	merge_sort(arr, mid + 1, right);
+
+	merge(arr, left, mid, right);
+}
+
+void merge(int arr[], int left, int mid, int right)
+{
+	int temp[nums];
+
+	int i = left;
+	int j = mid + 1;
+	int k = left;
+
+	while (i <= mid && j <= right)
+	{
+		if (arr[i] <= arr[j])
+			temp[k++] = arr[i++];
+		else
+			temp[k++] = arr[j++];
+	}
+
+	while (i <= mid)
+		temp[k++] = arr[i++];
+
+	while (j <= right)
+		temp[k++] = arr[j++];
+
+	for (i = left; i <= right; i++)
+		arr[i] = temp[i];
+}
+
+
+一開始merge_sort函數會接收37,41,19,81,41,25,56,61,49一維數列，left = 0, right = 8，這個函數會遞迴生成兩個函數merge_sort(arr, 0, 4)和merge_sort(arr, 5, 8)，這兩個函數又會遞迴生成merge_sort(arr, 0, 2)/merge_sort(arr, 3, 4)/merge_sort(arr, 5, 6)/merge_sort(arr, 7, 8)，這四個函數又會生成merge_sort(arr, 0, 1)/merge_sort(arr, 2, 2)/merge_sort(arr, 5, 5)/merge_sort(arr, 6, 8)，這四個函數中的兩個函數merge_sort(arr, 2, 2)/merge_sort(arr, 5, 5)都會return，只剩下merge_sort(arr, 0, 1)/merge_sort(arr, 6, 8)，這兩個函數又會生成merge_sort(arr, 7, 7)/merge_sort(arr, 8, 8)/merge_sort(arr, 0, 0)/merge_sort(arr, 1, 1)，這四個函數都會return。
+
+我在沙盤推演時，從merge_sort(arr, 0, 1)開始，這個函數將一維陣列中的37與41；之後處理函數merge_sort(arr, 3, 4)，這個函數會將19/81比較大小後放入一維陣列，接著處理merge_sort(arr, 0, 2)函數，我發現這個函數只有比較前面三個數字37/41/19，這跟我學得好像不一樣，因為他應該會處理37/41/19/81，為什麼少了81?以及我前面的思維是否有錯誤?

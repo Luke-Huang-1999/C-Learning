@@ -83,7 +83,7 @@ int main()
 	node cale[CAL_ROWS][CAL_COLS] = { 0 };
 	year = 2026;
 	month = 8;
-	int ds_dm_index = 0;
+	int ds_dm_index = 1;
 	int ds_dm_workday = 4;
 	//1.接收初始資訊
 	//receive_data(&year, &month,&ds_dm_index,&ds_dm_workday);
@@ -244,18 +244,18 @@ list* create_calendar_list_console(int year, int month, node cale[CAL_ROWS][CAL_
 	int ns_dm_workday = (ds_dm_workday + 3) % 6 + 1;//晚班主管連續天數5
 	int do_dm_workday = (ds_dm_workday % 2 != 0) ? 5 : 6;//輪休主管連續天數5
 	//int ds_dm_index = 0;//早班主管係數
-	int es_dm_index = (ds_dm_index + 1) % 4;//午班主管係數1
-	int ns_dm_index = (ds_dm_index + 2) % 4;//晚班主管係數2
-	int do_dm_index = (ds_dm_index + 3) % 4;//輪休主管係數3
+	int es_dm_index = (ds_dm_index + ((ds_dm_workday <= 4) ? 1 : 2)) % 4;//午班主管係數1
+	int ns_dm_index = (ds_dm_index + ((ds_dm_workday <= 2) ? 2 : 3)) % 4;//晚班主管係數2
+	int do_dm_index = (ds_dm_index + ((ds_dm_workday <= 2) ? 2 : (ds_dm_workday <= 4) ? 2 : 1)) % 4;//輪休主管係數3
 
 	int ds_employee_workday = ds_dm_workday;//早班員工連續天數
 	int es_employee_workday = (ds_dm_workday + 1) % 6 + 1;//午班員工連續天數
 	int ns_employee_workday = (ds_dm_workday + 3) % 6 + 1;//晚班員工連續天數
 	int do_employee_workday = (ds_dm_workday % 2 != 0) ? 5 : 6;//輪休員工連續天數
-	int ds_employee_index = ds_dm_index;//早班員工係數0
-	int es_employee_index = (ds_dm_index + 2) % 7;//午班員工係數2
-	int ns_employee_index = (ds_dm_index + 4) % 7;//晚班員工係數4
-	int do_employee_index = (ds_dm_index + 6) % 7;//輪休員工係數6
+	int ds_employee_index = ds_dm_index * 2;//早班員工係數0
+	int es_employee_index = es_dm_index * 2;//午班員工係數2
+	int ns_employee_index = ns_dm_index * 2;//晚班員工係數4
+	int do_employee_index = do_dm_index * 2;//輪休員工係數6
 
 	list* head = NULL;//開頭指標指向1號
 	list* current = NULL;
