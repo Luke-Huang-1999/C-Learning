@@ -3,6 +3,10 @@
 #include <string.h>
 #include <stdlib.h>
 
+/*
+工作天數 加班天數 休息天數 請假天數
+*/
+
 #define CAL_ROWS 6						//6行
 #define CAL_COLS 7						//一週7天
 #define EMPLOYEE_NUMS 8					//員工人數
@@ -120,11 +124,12 @@ int main()
 	//receive_data(&year, &month, &ds_dm_index, &ds_dm_workday);
 
 	//生成月曆
-	//list* head = create_calendar_list_console(year, month, cale, ds_dm_index, ds_dm_workday);
+	list* head = create_calendar_list_console(year, month, cale, ds_dm_index, ds_dm_workday);
 	
 	//列印月曆
-	//print_calendar_list_console(head);
-
+	print_calendar_list_console(head);
+	printf("\n");
+	total_working_hours_print(head);
 
 	//system("pause");
 
@@ -684,6 +689,7 @@ void total_working_hours_print(list* head)
 	int i;
 	while (current != NULL)
 	{
+		//DM工時
 		for (i = 0; i < DM_NUMS; i++)
 		{
 			if (strcmp(current->DS_DM, dm_all[i]) == 0)
@@ -700,12 +706,78 @@ void total_working_hours_print(list* head)
 
 			else if (strcmp(current->LEAVE_DM, dm_all[i]) == 0)
 			{
+				int leave_index = i;
+				int do_index = search(current->DO_DM);
+				int j;
+				for (j = 0; j < DM_NUMS; j++)
+				{
+					if (j != leave_index && j != do_index)
+						dm_working_hours[j] += 4.0;
+				}
+			}
+		}
+
+		//EMPLOYEE工時
+		for (i = 0; i < EMPLOYEE_NUMS; i++)
+		{
+			if (strcmp(current->DS_B, employee_all[i]) == 0)
+				employee_working_hours[i] += current->DS_B_WORKING_HOURS;
+
+			else if (strcmp(current->DS_H, employee_all[i]) == 0)
+				employee_working_hours[i] += current->DS_H_WORKING_HOURS;
+
+			else if (strcmp(current->ES_B, employee_all[i]) == 0)
+				employee_working_hours[i] += current->ES_B_WORKING_HOURS;
+
+			else if (strcmp(current->ES_H, employee_all[i]) == 0)
+				employee_working_hours[i] += current->ES_H_WORKING_HOURS;
+
+			else if (strcmp(current->NS_B, employee_all[i]) == 0)
+				employee_working_hours[i] += current->NS_B_WORKING_HOURS;
+
+			else if (strcmp(current->NS_H, employee_all[i]) == 0)
+				employee_working_hours[i] += current->NS_H_WORKING_HOURS;
+
+			else if (strcmp(current->LEAVE_DM, dm_all[i]) == 0)
+			{
+				if (i % 2 == 0)													//BRINE
+				{
+					int leave_index = i;
+					int do_index = search(current->DO_B);
+					int j;
+					for (j = 0; j < EMPLOYEE_NUMS; j+=2)
+					{
+						if (j != leave_index && j != do_index)
+							dm_working_hours[j] += 4.0;
+					}
+				}
+
+				if (i % 2 != 0)													//HCl
+				{
+					int leave_index = i;
+					int do_index = search(current->DO_H);
+					int j;
+					for (j = 1; j < EMPLOYEE_NUMS; j+=2)
+					{
+						if (j != leave_index && j != do_index)
+							dm_working_hours[j] += 4.0;
+					}
+				}
+
 
 			}
 		}
+		current = current->next;
 	}
 
-
+	//列印
+	for (i = 0; i < DM_NUMS; i++)
+	{
+		printf("DM ==> %7s  %.1f hours\n", dm_all[i], dm_working_hours[i]);
+		printf("B  ==> %7s  %.1f hours\n", employee_all[2 * i], employee_working_hours[2 * i]);
+		printf("H  ==> %7s  %.1f hours\n", employee_all[2 * i + 1], employee_working_hours[2 * i + 1]);
+		printf("\n");
+	}
 }
 
 void payroll_system(list* head)

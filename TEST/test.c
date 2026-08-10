@@ -2,33 +2,17 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-int search(char name[10]);
 
-char dm_all[4][10] = { "Alice" ,"David","Grog","Jackson" };
 
 int main()
 {
-	char name[10] = "Alice";
-	int index = search(name);
-	printf("%d", index);
+	int i;
+	for (i = 0; i < 5; i++)
+	{
+		if (i != 1 || i != 3)
+			printf("%d ", i);
+	}
 
 	return 0;
 }
 
-int search(char name[10])
-{
-	int i;
-	int index = 99;
-	for (i = 0; i < 4; i++)
-	{
-		if (strcmp(dm_all[i], name) == 0)
-			index = i;
-	}
-
-	if (index == 99)
-	{
-		printf("search is failed.\n");
-		return 0;
-	}
-	return index;
-}
