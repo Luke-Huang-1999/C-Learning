@@ -26,29 +26,38 @@ typedef struct data
 	int month;
 	int day;
 	char week[5];
-	char DS_DM[10];
-	char DS_B[10];
-	char DS_H[10];
-	char ES_DM[10];
-	char ES_B[10];
-	char ES_H[10];
-	char NS_DM[10];
-	char NS_B[10];
-	char NS_H[10];
-	char DO_DM[10];
-	char DO_B[10];
-	char DO_H[10];
-	char LEAVE_DS[10];
-	char LEAVE_ES[10];
-	char LEAVE_NS[10];
+	char DS_DM[NAME_LEN];
+	float DS_DM_WORKING_HOURS;
+	char DS_B[NAME_LEN];
+	float DS_B_WORKING_HOURS;
+	char DS_H[NAME_LEN];
+	float DS_H_WORKING_HOURS;
+	char ES_DM[NAME_LEN];
+	float ES_DM_WORKING_HOURS;
+	char ES_B[NAME_LEN];
+	float ES_B_WORKING_HOURS;
+	char ES_H[NAME_LEN];
+	float ES_H_WORKING_HOURS;
+	char NS_DM[NAME_LEN];
+	float NS_DM_WORKING_HOURS;
+	char NS_B[NAME_LEN];
+	float NS_B_WORKING_HOURS;
+	char NS_H[NAME_LEN];
+	float NS_H_WORKING_HOURS;
+	char DO_DM[NAME_LEN];
+	float DO_DM_WORKING_HOURS;
+	char DO_B[NAME_LEN];
+	float DO_B_WORKING_HOURS;
+	char DO_H[NAME_LEN];
+	float DO_H_WORKING_HOURS;
+	char LEAVE_DM[NAME_LEN];
+	float LEAVE_DM_WORKING_HOURS;
+	char LEAVE_B[NAME_LEN];
+	float LEAVE_B_WORKING_HOURS;
+	char LEAVE_H[NAME_LEN];
+	float LEAVE_H_WORKING_HOURS;
 	struct data* next;
 }list;
-
-typedef struct employinfo
-{
-	char name[NAME_LEN];
-	float work_time;		//unit:hour
-}epinfo;
 
 char employee_all[EMPLOYEE_NUMS][NAME_LEN] = { "Bruce","Carol" ,"Eason","Frank","Hank","Iris","Ken","Louis" };
 char dm_all[DM_NUMS][NAME_LEN] = { "Alice" ,"David","Grog","Jackson" };
@@ -57,6 +66,8 @@ char dm_all[DM_NUMS][NAME_LEN] = { "Alice" ,"David","Grog","Jackson" };
 char shift[3][15] = { "Day","Evening" ,"Night" };
 char parts[3][15] = { "DM","Brine","HCl" };
 char all_week[7][5] = { "Mon","Tue","Wed" ,"Thu" ,"Fri" ,"Sat" ,"Sun" };
+float dm_working_hours[DM_NUMS] = { 0.0 };
+float employee_working_hours[EMPLOYEE_NUMS] = { 0.0 };
 
 void receive_data(int* year, int* month, int* ds_dm_index, int* ds_dm_workday);
 //(回傳當年當月的1號星期幾)蔡勒公式(年份, 月份)
@@ -80,14 +91,20 @@ void print_calendar_chart_console(node cale[CAL_ROWS][CAL_COLS]);
 //()生成月曆清單節點(相關資料)
 list* create_list(int month, int day, char week[5], char DS_DM[10], char DS_B[10], char DS_H[10], char ES_DM[10], char ES_B[10], char ES_H[10], char NS_DM[10], char NS_B[10], char NS_H[10], char DO_DM[10], char DO_B[10], char DO_H[10], char LEAVE_DS[10], char LEAVE_ES[10], char LEAVE_NS[10]);
 
-//()工資計算()
-void salary_settlement(list* head, int year, int month);
+//每日工時計算(list型態的首區塊指標)
+void working_hours_daily(list* head);
 
-//()生成員工資料節點()
-epinfo* create_epinfo(char employee[NAME_LEN], int work_time);
-
-//()請假系統()
+//()操作系統(list型態的首區塊指標, 年, 月)
 void operation_system(list* head, int year, int month);
+
+//()工資計算()
+void total_working_hours_print(list* head);
+
+//工資結算系統()
+void payroll_system(list* head);
+
+//(索引值)名字搜尋索引值(一維陣列, 一維陣列)
+int search(char name[NAME_LEN]);
 
 int main()
 {
@@ -100,20 +117,16 @@ int main()
 	int ds_dm_workday = 4;
 	int personal_leave = 0;
 	//1.接收初始資訊
-	receive_data(&year, &month,&ds_dm_index,&ds_dm_workday);
+	//receive_data(&year, &month, &ds_dm_index, &ds_dm_workday);
 
 	//生成月曆
-	list* head = create_calendar_list_console(year, month, cale, ds_dm_index, ds_dm_workday);
-
-	//請假系統介入
-	//operation_system(head, year, month);
-
+	//list* head = create_calendar_list_console(year, month, cale, ds_dm_index, ds_dm_workday);
+	
 	//列印月曆
-	print_calendar_list_console(head);
+	//print_calendar_list_console(head);
 
-	//薪資計算
-	//salary_settlement(head, year, month);
-	system("pause");
+
+	//system("pause");
 
 	return 0;
 }
@@ -238,8 +251,6 @@ void create_calendar_chart(int year, int month, node cale[CAL_ROWS][CAL_COLS])
 
 list* create_calendar_list_console(int year, int month, node cale[CAL_ROWS][CAL_COLS], int ds_dm_index, int ds_dm_workday)
 {
-
-
 	int week = Zeller(year, month); //第一天星期幾 6[5]
 	int day_max = month_days(year, month);//總天數
 	int day_cnt = 1;//天數紀錄
@@ -357,6 +368,32 @@ list* create_calendar_list_console(int year, int month, node cale[CAL_ROWS][CAL_
 		current = newnode;
 		day_cnt++;
 	}
+
+
+	working_hours_daily(head);
+	//test working_hours_daily
+	//int i = 1;
+	//current = head;
+	//while (current != NULL)
+	//{
+	//	printf("第%2d天 ", i++);
+	//	printf("%2.1f,%2.1f,%2.1f,   %2.1f,%2.1f,%2.1f,   %2.1f,%2.1f,%2.1f,   %2.1f,%2.1f,%2.1f\n",
+	//		current->DS_DM_WORKING_HOURS,
+	//		current->DS_B_WORKING_HOURS,
+	//		current->DS_H_WORKING_HOURS,
+	//		current->ES_DM_WORKING_HOURS,
+	//		current->ES_B_WORKING_HOURS,
+	//		current->ES_H_WORKING_HOURS,
+	//		current->NS_DM_WORKING_HOURS,
+	//		current->NS_B_WORKING_HOURS,
+	//		current->NS_H_WORKING_HOURS,
+	//		current->DO_DM_WORKING_HOURS,
+	//		current->DO_B_WORKING_HOURS,
+	//		current->DO_H_WORKING_HOURS
+	//		);
+	//	current = current->next;
+	//}
+
 	return head;
 }
 
@@ -367,7 +404,7 @@ void print_calendar_list_console(list* head)
 		printf("calendar list is not exit.\n");
 		exit(1);
 	}
-	
+
 	//建立標題
 	int i;
 	printf("%5s%5s%30s%30s%30s%30s%30s\n", "date", "week", shift[0], shift[1], shift[2], "Day-off", "Leave");
@@ -395,7 +432,7 @@ void print_calendar_list_console(list* head)
 		printf("%10s%10s%10s", current->ES_DM, current->ES_B, current->ES_H);
 		printf("%10s%10s%10s", current->NS_DM, current->NS_B, current->NS_H);
 		printf("%10s%10s%10s", current->DO_DM, current->DO_B, current->DO_H);
-		printf("%10s%10s%10s", current->LEAVE_DS, current->LEAVE_ES, current->LEAVE_NS);
+		printf("%10s%10s%10s", current->LEAVE_DM, current->LEAVE_B, current->LEAVE_H);
 		printf("\n");
 		//for (i = 0; i < 166; i++)
 		//	printf("-");
@@ -513,95 +550,58 @@ list* create_list(int month, int day, char week[5], char DS_DM[10], char DS_B[10
 	strcpy(newnode->DO_DM, DO_DM);
 	strcpy(newnode->DO_B, DO_B);
 	strcpy(newnode->DO_H, DO_H);
-	strcpy(newnode->LEAVE_DS, LEAVE_DS);
-	strcpy(newnode->LEAVE_ES, LEAVE_ES);
-	strcpy(newnode->LEAVE_NS, LEAVE_NS);
+	strcpy(newnode->LEAVE_DM, LEAVE_DS);
+	strcpy(newnode->LEAVE_B, LEAVE_ES);
+	strcpy(newnode->LEAVE_H, LEAVE_NS);
 	newnode->next = NULL;
 	return newnode;
 }
 
-void salary_settlement(list* head, int year, int month)
+void working_hours_daily(list* head)
 {
-	list* current = head;
-	epinfo dm_salary[DM_NUMS];
-	epinfo employee_salary[EMPLOYEE_NUMS];
-	int max_day = month_days(year, month);
-
-	//初始化
 	int i;
-	for (i = 0; i < DM_NUMS; i++)
-	{
-		strcpy(dm_salary[i].name, dm_all[i]);
-		dm_salary[i].work_time = max_day;
-	}
-	for (i = 0; i < EMPLOYEE_NUMS; i++)
-	{
-		strcpy(employee_salary[i].name, employee_all[i]);
-		employee_salary[i].work_time = 0.0;
-	}
-
-	//dm薪資計算
+	list* current = head;
 	while (current != NULL)
 	{
 		for (i = 0; i < DM_NUMS; i++)
 		{
-			if (strcmp(dm_salary[i].name, current->DO_DM) == 0)
-			{
-				dm_salary[i].work_time--;
-			}
+			if (strcmp(current->DS_DM, dm_all[i]) == 0)
+				current->DS_DM_WORKING_HOURS = working_hours_per_day;
+
+			else if(strcmp(current->ES_DM, dm_all[i]) == 0)
+				current->ES_DM_WORKING_HOURS = working_hours_per_day;
+
+			else if(strcmp(current->NS_DM, dm_all[i]) == 0)
+				current->NS_DM_WORKING_HOURS = working_hours_per_day;
+			
+			else if(strcmp(current->DO_DM, dm_all[i]) == 0)
+				current->DO_DM_WORKING_HOURS = 0.0;
+		}
+		for (i = 0; i < EMPLOYEE_NUMS; i++)
+		{
+			if (strcmp(current->DS_B, employee_all[i]) == 0)
+				current->DS_B_WORKING_HOURS = working_hours_per_day;
+			else if(strcmp(current->DS_H, employee_all[i]) == 0)
+				current->DS_H_WORKING_HOURS = working_hours_per_day;
+
+			else if(strcmp(current->ES_B, employee_all[i]) == 0)
+				current->ES_B_WORKING_HOURS = working_hours_per_day;
+			else if(strcmp(current->ES_H, employee_all[i]) == 0)
+				current->ES_H_WORKING_HOURS = working_hours_per_day;
+
+			else if(strcmp(current->NS_B, employee_all[i]) == 0)
+				current->NS_B_WORKING_HOURS = working_hours_per_day;
+			else if(strcmp(current->NS_H, employee_all[i]) == 0)
+				current->NS_H_WORKING_HOURS = working_hours_per_day;
+
+			else if(strcmp(current->DO_B, employee_all[i]) == 0)
+				current->DO_B_WORKING_HOURS = 0.0;
+			else if(strcmp(current->DO_H, employee_all[i]) == 0)
+				current->DO_H_WORKING_HOURS = 0.0;
 		}
 		current = current->next;
 	}
-	current = head;
 
-	//工作天數乘工時
-	for (i = 0; i < DM_NUMS; i++)
-	{
-		dm_salary[i].work_time = dm_salary[i].work_time * working_hours_per_day;
-	}
-
-
-	//employee_1薪資計算
-	for (i = 0; i < DM_NUMS; i++)
-	{
-		employee_salary[i * 2].work_time = dm_salary[i].work_time;
-		employee_salary[i * 2 + 1].work_time = dm_salary[i].work_time;
-	}
-
-	//employee_2薪資計算
-	for (i = 0; i < DM_NUMS; i++)
-	{
-		employee_salary[i * 2].work_time = dm_salary[i].work_time;
-		employee_salary[i * 2 + 1].work_time = dm_salary[i].work_time;
-	}
-
-	//列印
-	printf("工資結算系統：\n");
-	printf("%10s%16s\n", "Name", "work_time");
-	for (i = 0; i < 26; i++)
-		printf("-");
-	printf("\n");
-	for (i = 0; i < DM_NUMS; i++)
-	{
-		printf("%10s%10.2f hours\n", dm_salary[i].name, dm_salary[i].work_time);
-		printf("%10s%10.2f hours\n", employee_salary[i * 2].name, employee_salary[i * 2].work_time);
-		printf("%10s%10.2f hours\n", employee_salary[i * 2 + 1].name, employee_salary[i * 2 + 1].work_time);
-	}
-	//printf("\n");
-}
-
-epinfo* create_epinfo(char employee[NAME_LEN], int work_time)
-{
-	epinfo* newnode = (epinfo*)malloc(sizeof(epinfo));
-	if (newnode == NULL)
-	{
-		printf("create_epinfo is failed.\n");
-		exit(1);
-	}
-	strcpy(newnode->name, employee);
-	newnode->work_time = work_time;
-
-	return newnode;
 }
 
 void operation_system(list* head, int year, int month)
@@ -609,27 +609,129 @@ void operation_system(list* head, int year, int month)
 	int mode;
 	while (1)
 	{
-		printf("操作系統選擇：[0]=>請假系統   [1]=>工資結算系統   [2]結束");
+		printf("操作系統選擇：[0]=>結束   [1]=>工資結算系統   [2]工資表   [3]請假系統   [4]列印班表   [5]列印工時表");
 		scanf("%d", &mode);
-		if(mode < 0 || mode > 2)
+
+		switch (mode)
 		{
-			printf("輸入錯誤，請再輸入一次。\n");
-			continue;
+			case(0):
+			{
+				printf("結束\n");
+				break;
+			}
+			case(1):
+			{
+				printf("工資結算系統\n");
+				continue;
+			}
+			case(2):
+			{
+				printf("工資表\n");
+				continue;
+			}
+			case(3):
+			{
+				printf("請假系統\n");
+				continue;
+			}
+			case(4):
+			{
+				printf("列印班表\n");
+				continue;
+			}
+			case(5):
+			{
+				printf("列印工時表\n");
+				continue;
+			}
+			default:
+			{
+				printf("輸入錯誤，請再輸入乙次。\n");
+				continue;
+			}
 		}
 
-		if (mode == 2)
-		{
-			printf("程式結束。\n");
+		if (mode == 0)
 			break;
-		}
-		else if (mode == 0)
-		{
 
-		}
-		else if (mode == 1)
+
+
+	}
+
+}
+
+void total_working_hours_print(list* head)
+{
+
+	//dm_working_hours[DM_NUMS] = { 0.0 };
+	//employee_working_hours[EMPLOYEE_NUMS] = { 0.0 };
+
+	//float dm1_working_hours = 0;
+	//float dm2_working_hours = 0;
+	//float dm3_working_hours = 0;
+	//float dm4_working_hours = 0;
+
+	//float employee1_working_hours = 0;
+	//float employee2_working_hours = 0;
+	//float employee3_working_hours = 0;
+	//float employee4_working_hours = 0;
+	//float employee5_working_hours = 0;
+	//float employee6_working_hours = 0;
+	//float employee7_working_hours = 0;
+	//float employee8_working_hours = 0;
+
+	list* current = head;
+	int i;
+	while (current != NULL)
+	{
+		for (i = 0; i < DM_NUMS; i++)
 		{
-			salary_settlement(head, year, month);
+			if (strcmp(current->DS_DM, dm_all[i]) == 0)
+				dm_working_hours[i] += current->DS_DM_WORKING_HOURS;
+
+			else if (strcmp(current->ES_DM, dm_all[i]) == 0)
+				dm_working_hours[i] += current->ES_DM_WORKING_HOURS;
+
+			else if (strcmp(current->NS_DM, dm_all[i]) == 0)
+				dm_working_hours[i] += current->NS_DM_WORKING_HOURS;
+
+			else if (strcmp(current->DO_DM, dm_all[i]) == 0)
+				dm_working_hours[i] += current->DO_DM_WORKING_HOURS;
+
+			else if (strcmp(current->LEAVE_DM, dm_all[i]) == 0)
+			{
+
+			}
 		}
 	}
-	
+
+
+}
+
+void payroll_system(list* head)
+{
+
+
+}
+
+int search(char name[NAME_LEN])
+{
+	int i;
+	int index = 99;
+	for (i = 0; i < DM_NUMS; i++)
+	{
+		if (strcmp(dm_all[i], name) == 0)
+			index = i;
+	}
+	for (i = 0; i < EMPLOYEE_NUMS; i++)
+	{
+		if (strcmp(employee_all[i], name) == 0)
+			index = i;
+	}
+	if (index == 99)
+	{
+		printf("search is failed.\n");
+		return 0;
+	}
+	return index;
 }
