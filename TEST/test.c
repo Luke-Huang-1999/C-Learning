@@ -6,13 +6,9 @@
 
 int main()
 {
-	int i;
-	for (i = 0; i < 5; i++)
-	{
-		if (i != 1 || i != 3)
-			printf("%d ", i);
-	}
-
+	int a = 5;
+	int& ref = a;
+	a = a + 10;
 	return 0;
 }
 

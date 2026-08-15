@@ -14,7 +14,7 @@
 #define WORK_DAY_MAX 6					//最多連續做幾天
 #define EMPTY_DAY 0						//月曆中空白日的賦值
 #define SHIFT_NUMS 3					//班別(早班午班晚班)
-#define NAME_LEN 10						//員工名字長度限制20bytes
+#define NAME_LEN 10						//員工名字長度限制
 #define working_hours_per_day 8.0		//一日工時
 
 typedef struct node
@@ -101,11 +101,11 @@ void working_hours_daily(list* head);
 //()操作系統(list型態的首區塊指標, 年, 月)
 void operation_system(list* head, int year, int month);
 
-//()工資計算()
+//()該月工時總計(list型態的首區塊指標)
 void total_working_hours_print(list* head);
 
-//工資結算系統()
-void payroll_system(list* head);
+//請假系統()
+void leave_system(list* head);
 
 //(索引值)名字搜尋索引值(一維陣列, 一維陣列)
 int search(char name[NAME_LEN]);
@@ -121,7 +121,7 @@ int main()
 	int ds_dm_workday = 4;
 	int personal_leave = 0;
 	//1.接收初始資訊
-	//receive_data(&year, &month, &ds_dm_index, &ds_dm_workday);
+	receive_data(&year, &month, &ds_dm_index, &ds_dm_workday);
 
 	//生成月曆
 	list* head = create_calendar_list_console(year, month, cale, ds_dm_index, ds_dm_workday);
@@ -129,7 +129,14 @@ int main()
 	//列印月曆
 	print_calendar_list_console(head);
 	printf("\n");
-	total_working_hours_print(head);
+	
+	//操作系統
+	operation_system(head, year, month);
+
+
+
+	
+	//total_working_hours_print(head);
 
 	//system("pause");
 
@@ -422,7 +429,6 @@ void print_calendar_list_console(list* head)
 		printf("%10s%10s%10s", parts[0], parts[1], parts[2]);
 	}
 	printf("\n");
-	//printf("%10s%10s%10s\n", parts[0], parts[1], parts[2]);
 	for (i = 0; i < 160; i++)
 		printf("=");
 	printf("\n");
@@ -441,7 +447,7 @@ void print_calendar_list_console(list* head)
 		printf("\n");
 		//for (i = 0; i < 166; i++)
 		//	printf("-");
-		printf("\n");
+		//printf("\n");
 		current = current->next;
 	}
 	printf("\n");
@@ -604,6 +610,7 @@ void working_hours_daily(list* head)
 			else if(strcmp(current->DO_H, employee_all[i]) == 0)
 				current->DO_H_WORKING_HOURS = 0.0;
 		}
+
 		current = current->next;
 	}
 
@@ -614,7 +621,8 @@ void operation_system(list* head, int year, int month)
 	int mode;
 	while (1)
 	{
-		printf("操作系統選擇：[0]=>結束   [1]=>工資結算系統   [2]工資表   [3]請假系統   [4]列印班表   [5]列印工時表");
+		printf("操作系統選擇：[0]=>結束   [1]請假系統   [2]列印班表   [3]列印工時表\n");
+		printf("==> ");
 		scanf("%d", &mode);
 
 		switch (mode)
@@ -626,27 +634,20 @@ void operation_system(list* head, int year, int month)
 			}
 			case(1):
 			{
-				printf("工資結算系統\n");
+				printf("請假系統\n");
+				leave_system(head);
 				continue;
 			}
 			case(2):
 			{
-				printf("工資表\n");
+				printf("列印班表\n");
+				print_calendar_list_console(head);
 				continue;
 			}
 			case(3):
 			{
-				printf("請假系統\n");
-				continue;
-			}
-			case(4):
-			{
-				printf("列印班表\n");
-				continue;
-			}
-			case(5):
-			{
 				printf("列印工時表\n");
+				total_working_hours_print(head);
 				continue;
 			}
 			default:
@@ -667,24 +668,6 @@ void operation_system(list* head, int year, int month)
 
 void total_working_hours_print(list* head)
 {
-
-	//dm_working_hours[DM_NUMS] = { 0.0 };
-	//employee_working_hours[EMPLOYEE_NUMS] = { 0.0 };
-
-	//float dm1_working_hours = 0;
-	//float dm2_working_hours = 0;
-	//float dm3_working_hours = 0;
-	//float dm4_working_hours = 0;
-
-	//float employee1_working_hours = 0;
-	//float employee2_working_hours = 0;
-	//float employee3_working_hours = 0;
-	//float employee4_working_hours = 0;
-	//float employee5_working_hours = 0;
-	//float employee6_working_hours = 0;
-	//float employee7_working_hours = 0;
-	//float employee8_working_hours = 0;
-
 	list* current = head;
 	int i;
 	while (current != NULL)
@@ -713,6 +696,9 @@ void total_working_hours_print(list* head)
 				{
 					if (j != leave_index && j != do_index)
 						dm_working_hours[j] += 4.0;
+
+					if (j == leave_index)
+						dm_working_hours[j] -= working_hours_per_day;
 				}
 			}
 		}
@@ -778,12 +764,92 @@ void total_working_hours_print(list* head)
 		printf("H  ==> %7s  %.1f hours\n", employee_all[2 * i + 1], employee_working_hours[2 * i + 1]);
 		printf("\n");
 	}
+	
+	//工時歸零
+	for (i = 0; i < DM_NUMS; i++)
+	{
+		dm_working_hours[i] = 0.0;
+		employee_working_hours[2 * i] = 0.0;
+		employee_working_hours[2 * i + 1] = 0.0;
+	}
 }
 
-void payroll_system(list* head)
+void leave_system(list* head)
 {
+	int leave_day = 1;
+	list* current = head;
+	int mode_index;
+	int index;
+	while (leave_day != 0)
+	{
+		printf("請輸入請假日期(5號，則輸入 5；結束請假系統請輸入 0 )：\n");
+		printf("==> ");
+		scanf("%d", &leave_day);
+		if (leave_day == 0)
+		{
+			printf("結束請假系統。\n");
+			break;
+		}
+		while (current->day != leave_day)
+			current = current->next;
 
 
+		//建立標題
+		int i;
+		printf("%5s%5s%30s%30s%30s%30s%30s\n", "date", "week", shift[0], shift[1], shift[2], "Day-off", "Leave");
+		for (i = 0; i < 160; i++)
+			printf("=");
+
+		printf("\n");
+		printf("%10s", " ");
+		for (i = 0; i < 5; i++)
+			printf("%10s%10s%10s", parts[0], parts[1], parts[2]);
+
+		printf("\n");
+		for (i = 0; i < 160; i++)
+			printf("=");
+		printf("\n");
+
+		printf("%2d/%2d%5s", current->month, current->day, current->week);
+		printf("%10s%10s%10s", current->DS_DM, current->DS_B, current->DS_H);
+		printf("%10s%10s%10s", current->ES_DM, current->ES_B, current->ES_H);
+		printf("%10s%10s%10s", current->NS_DM, current->NS_B, current->NS_H);
+		printf("%10s%10s%10s", current->DO_DM, current->DO_B, current->DO_H);
+		printf("%10s%10s%10s", current->LEAVE_DM, current->LEAVE_B, current->LEAVE_H);
+		printf("\n");
+
+		printf("[0]DM or [1]Employee ==>");
+		scanf("%d", &mode_index);
+
+		printf("請輸入請假人員姓名：");
+		if (mode_index == 0)									//DM請假
+		{
+			for (i = 0; i < DM_NUMS; i++)
+				printf("[%d]%s ", i, dm_all[i]);
+			printf("\n");
+
+			scanf("%d", &index);
+
+			strcpy(current->LEAVE_DM, dm_all[index]);
+		}
+		else if (mode_index == 1)
+		{
+			for (i = 0; i < EMPLOYEE_NUMS; i++)
+				printf("[%d]%s ", i, employee_all[i]);
+			printf("\n");
+
+			scanf("%d", &index);
+			if ((index % 2) == 0)								//B位置的工作人員
+				strcpy(current->LEAVE_B, employee_all[index]);
+			else												//H位置的工作人員
+				strcpy(current->LEAVE_H, employee_all[index]);
+		}
+		else
+		{
+			printf("輸入錯誤。\n");
+			continue;
+		}
+	}
 }
 
 int search(char name[NAME_LEN])
