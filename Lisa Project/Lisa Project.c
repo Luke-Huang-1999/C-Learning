@@ -14,8 +14,11 @@
 #define WORK_DAY_MAX 6					//最多連續做幾天
 #define EMPTY_DAY 0						//月曆中空白日的賦值
 #define SHIFT_NUMS 3					//班別(早班午班晚班)
-#define NAME_LEN 10						//員工名字長度限制
+#define NAME_LEN 15						//員工名字長度限制
 #define working_hours_per_day 8.0		//一日工時
+
+#define LIST_DATE_LEN 5
+#define LIST_NAME_LEN 10
 
 typedef struct node
 {
@@ -60,13 +63,14 @@ typedef struct data
 	float LEAVE_B_WORKING_HOURS;
 	char LEAVE_H[NAME_LEN];
 	float LEAVE_H_WORKING_HOURS;
+	char NAME_LIST[15][NAME_LEN];
 	struct data* next;
 }list;
 
-char employee_all[EMPLOYEE_NUMS][NAME_LEN] = { "Bruce","Carol" ,"Eason","Frank","Hank","Iris","Ken","Louis" };
-char dm_all[DM_NUMS][NAME_LEN] = { "Alice" ,"David","Grog","Jackson" };
-//char employee_all[EMPLOYEE_NUMS][NAME_LEN] = { "小新","廣志" ,"小葵","小白","風間","阿呆","妮妮","正男" };
-//char dm_all[DM_NUMS][NAME_LEN] = { "維尼" ,"小豬","屹耳","跳跳虎" };
+//char employee_all[EMPLOYEE_NUMS][NAME_LEN] = { "Bruce","Carol" ,"Eason","Frank","Hank","Iris","Ken","Louis" };
+//char dm_all[DM_NUMS][NAME_LEN] = { "Alice" ,"David","Grog","Jackson" };
+char employee_all[EMPLOYEE_NUMS][NAME_LEN] = { "小新","廣志" ,"小葵","小白","風間","阿呆","妮妮","正男" };
+char dm_all[DM_NUMS][NAME_LEN] = { "維尼" ,"小豬","屹耳","羅賓" };
 char shift[3][15] = { "Day","Evening" ,"Night" };
 char parts[3][15] = { "DM","Brine","HCl" };
 char all_week[7][5] = { "Mon","Tue","Wed" ,"Thu" ,"Fri" ,"Sat" ,"Sun" };
@@ -110,6 +114,8 @@ void leave_system(list* head);
 //(索引值)名字搜尋索引值(一維陣列, 一維陣列)
 int search(char name[NAME_LEN]);
 
+void test_hours(list* head);
+
 int main()
 {
 	//宣告變數
@@ -121,21 +127,21 @@ int main()
 	int ds_dm_workday = 4;
 	int personal_leave = 0;
 	//1.接收初始資訊
-	receive_data(&year, &month, &ds_dm_index, &ds_dm_workday);
+	//receive_data(&year, &month, &ds_dm_index, &ds_dm_workday);
 
 	//生成月曆
 	list* head = create_calendar_list_console(year, month, cale, ds_dm_index, ds_dm_workday);
-	
+
 	//列印月曆
 	print_calendar_list_console(head);
 	printf("\n");
-	
+
 	//操作系統
 	operation_system(head, year, month);
 
 
 
-	
+
 	//total_working_hours_print(head);
 
 	//system("pause");
@@ -419,31 +425,39 @@ void print_calendar_list_console(list* head)
 
 	//建立標題
 	int i;
-	printf("%5s%5s%30s%30s%30s%30s%30s\n", "date", "week", shift[0], shift[1], shift[2], "Day-off", "Leave");
+	printf("%*s%*s%*s%*s%*s%*s%*s\n"
+		, LIST_DATE_LEN, "Date"
+		, LIST_DATE_LEN, "Week"
+		, LIST_NAME_LEN * 3, shift[0]
+		, LIST_NAME_LEN * 3, shift[1]
+		, LIST_NAME_LEN * 3, shift[2]
+		, LIST_NAME_LEN * 3, "Day-off"
+		, LIST_NAME_LEN * 3, "Leave");
 	for (i = 0; i < 160; i++)
 		printf("=");
 	printf("\n");
 	printf("%10s", " ");
 	for (i = 0; i < 5; i++)
 	{
-		printf("%10s%10s%10s", parts[0], parts[1], parts[2]);
+		printf("%*s%*s%*s"
+			, LIST_NAME_LEN, parts[0]
+			, LIST_NAME_LEN, parts[1]
+			, LIST_NAME_LEN, parts[2]);
 	}
 	printf("\n");
 	for (i = 0; i < 160; i++)
 		printf("=");
 	printf("\n");
 
-
-
 	list* current = head;
 	while (current != NULL)
 	{
-		printf("%2d/%2d%5s", current->month, current->day, current->week);
-		printf("%10s%10s%10s", current->DS_DM, current->DS_B, current->DS_H);
-		printf("%10s%10s%10s", current->ES_DM, current->ES_B, current->ES_H);
-		printf("%10s%10s%10s", current->NS_DM, current->NS_B, current->NS_H);
-		printf("%10s%10s%10s", current->DO_DM, current->DO_B, current->DO_H);
-		printf("%10s%10s%10s", current->LEAVE_DM, current->LEAVE_B, current->LEAVE_H);
+		printf("%*d/%*d%5s", LIST_DATE_LEN % 3, current->month, LIST_DATE_LEN % 3, current->day, current->week);
+		printf("%*s%*s%*s", LIST_NAME_LEN, current->DS_DM, LIST_NAME_LEN, current->DS_B, LIST_NAME_LEN, current->DS_H);
+		printf("%*s%*s%*s", LIST_NAME_LEN, current->ES_DM, LIST_NAME_LEN, current->ES_B, LIST_NAME_LEN, current->ES_H);
+		printf("%*s%*s%*s", LIST_NAME_LEN, current->NS_DM, LIST_NAME_LEN, current->NS_B, LIST_NAME_LEN, current->NS_H);
+		printf("%*s%*s%*s", LIST_NAME_LEN, current->DO_DM, LIST_NAME_LEN, current->DO_B, LIST_NAME_LEN, current->DO_H);
+		printf("%*s%*s%*s", LIST_NAME_LEN, current->LEAVE_DM, LIST_NAME_LEN, current->LEAVE_B, LIST_NAME_LEN, current->LEAVE_H);
 		printf("\n");
 		//for (i = 0; i < 166; i++)
 		//	printf("-");
@@ -536,8 +550,9 @@ void print_calendar_chart_console(node cale[CAL_ROWS][CAL_COLS])
 	}
 }
 
-list* create_list(int month, int day, char week[5], char DS_DM[10], char DS_B[10], char DS_H[10], char ES_DM[10], char ES_B[10], char ES_H[10], char NS_DM[10], char NS_B[10], char NS_H[10], char DO_DM[10], char DO_B[10], char DO_H[10], char LEAVE_DS[10], char LEAVE_ES[10], char LEAVE_NS[10])
+list* create_list(int month, int day, char week[5], char DS_DM[10], char DS_B[10], char DS_H[10], char ES_DM[10], char ES_B[10], char ES_H[10], char NS_DM[10], char NS_B[10], char NS_H[10], char DO_DM[10], char DO_B[10], char DO_H[10], char LEAVE_DM[10], char LEAVE_B[10], char LEAVE_H[10])
 {
+	int i = 0;
 	list* newnode = (list*)malloc(sizeof(list));
 	if (newnode == NULL)
 	{
@@ -550,21 +565,37 @@ list* create_list(int month, int day, char week[5], char DS_DM[10], char DS_B[10
 	newnode->day = day;
 	strcpy(newnode->week, week);
 	strcpy(newnode->DS_DM, DS_DM);
+	strcpy(newnode->NAME_LIST[i++], DS_DM);
 	strcpy(newnode->DS_B, DS_B);
+	strcpy(newnode->NAME_LIST[i++], DS_B);
 	strcpy(newnode->DS_H, DS_H);
+	strcpy(newnode->NAME_LIST[i++], DS_H);
 	strcpy(newnode->ES_DM, ES_DM);
+	strcpy(newnode->NAME_LIST[i++], ES_DM);
 	strcpy(newnode->ES_B, ES_B);
+	strcpy(newnode->NAME_LIST[i++], ES_B);
 	strcpy(newnode->ES_H, ES_H);
+	strcpy(newnode->NAME_LIST[i++], ES_H);
 	strcpy(newnode->NS_DM, NS_DM);
+	strcpy(newnode->NAME_LIST[i++], NS_DM);
 	strcpy(newnode->NS_B, NS_B);
+	strcpy(newnode->NAME_LIST[i++], NS_B);
 	strcpy(newnode->NS_H, NS_H);
+	strcpy(newnode->NAME_LIST[i++], NS_H);
 	strcpy(newnode->DO_DM, DO_DM);
+	strcpy(newnode->NAME_LIST[i++], DO_DM);
 	strcpy(newnode->DO_B, DO_B);
+	strcpy(newnode->NAME_LIST[i++], DO_B);
 	strcpy(newnode->DO_H, DO_H);
-	strcpy(newnode->LEAVE_DM, LEAVE_DS);
-	strcpy(newnode->LEAVE_B, LEAVE_ES);
-	strcpy(newnode->LEAVE_H, LEAVE_NS);
+	strcpy(newnode->NAME_LIST[i++], DO_H);
+	strcpy(newnode->LEAVE_DM, LEAVE_DM);
+	strcpy(newnode->NAME_LIST[i++], LEAVE_DM);
+	strcpy(newnode->LEAVE_B, LEAVE_B);
+	strcpy(newnode->NAME_LIST[i++], LEAVE_B);
+	strcpy(newnode->LEAVE_H, LEAVE_H);
+	strcpy(newnode->NAME_LIST[i++], LEAVE_H);
 	newnode->next = NULL;
+
 	return newnode;
 }
 
@@ -579,36 +610,49 @@ void working_hours_daily(list* head)
 			if (strcmp(current->DS_DM, dm_all[i]) == 0)
 				current->DS_DM_WORKING_HOURS = working_hours_per_day;
 
-			else if(strcmp(current->ES_DM, dm_all[i]) == 0)
+			else if (strcmp(current->ES_DM, dm_all[i]) == 0)
 				current->ES_DM_WORKING_HOURS = working_hours_per_day;
 
-			else if(strcmp(current->NS_DM, dm_all[i]) == 0)
+			else if (strcmp(current->NS_DM, dm_all[i]) == 0)
 				current->NS_DM_WORKING_HOURS = working_hours_per_day;
-			
-			else if(strcmp(current->DO_DM, dm_all[i]) == 0)
+
+			else if (strcmp(current->DO_DM, dm_all[i]) == 0)
 				current->DO_DM_WORKING_HOURS = 0.0;
+
+			else if (strcmp(current->LEAVE_DM, dm_all[i]) == 0)
+			{
+				current->LEAVE_DM_WORKING_HOURS = -working_hours_per_day;
+			}
+
+			else
+				current->LEAVE_DM_WORKING_HOURS = 0.0;
 		}
 		for (i = 0; i < EMPLOYEE_NUMS; i++)
 		{
 			if (strcmp(current->DS_B, employee_all[i]) == 0)
 				current->DS_B_WORKING_HOURS = working_hours_per_day;
-			else if(strcmp(current->DS_H, employee_all[i]) == 0)
+			else if (strcmp(current->DS_H, employee_all[i]) == 0)
 				current->DS_H_WORKING_HOURS = working_hours_per_day;
 
-			else if(strcmp(current->ES_B, employee_all[i]) == 0)
+			else if (strcmp(current->ES_B, employee_all[i]) == 0)
 				current->ES_B_WORKING_HOURS = working_hours_per_day;
-			else if(strcmp(current->ES_H, employee_all[i]) == 0)
+			else if (strcmp(current->ES_H, employee_all[i]) == 0)
 				current->ES_H_WORKING_HOURS = working_hours_per_day;
 
-			else if(strcmp(current->NS_B, employee_all[i]) == 0)
+			else if (strcmp(current->NS_B, employee_all[i]) == 0)
 				current->NS_B_WORKING_HOURS = working_hours_per_day;
-			else if(strcmp(current->NS_H, employee_all[i]) == 0)
+			else if (strcmp(current->NS_H, employee_all[i]) == 0)
 				current->NS_H_WORKING_HOURS = working_hours_per_day;
 
-			else if(strcmp(current->DO_B, employee_all[i]) == 0)
+			else if (strcmp(current->DO_B, employee_all[i]) == 0)
 				current->DO_B_WORKING_HOURS = 0.0;
-			else if(strcmp(current->DO_H, employee_all[i]) == 0)
+			else if (strcmp(current->DO_H, employee_all[i]) == 0)
 				current->DO_H_WORKING_HOURS = 0.0;
+
+			else if (strcmp(current->LEAVE_B, employee_all[i]) == 0)
+				current->LEAVE_B_WORKING_HOURS = -working_hours_per_day;
+			else if (strcmp(current->LEAVE_H, employee_all[i]) == 0)
+				current->LEAVE_H_WORKING_HOURS = -working_hours_per_day;
 		}
 
 		current = current->next;
@@ -627,34 +671,34 @@ void operation_system(list* head, int year, int month)
 
 		switch (mode)
 		{
-			case(0):
-			{
-				printf("結束\n");
-				break;
-			}
-			case(1):
-			{
-				printf("請假系統\n");
-				leave_system(head);
-				continue;
-			}
-			case(2):
-			{
-				printf("列印班表\n");
-				print_calendar_list_console(head);
-				continue;
-			}
-			case(3):
-			{
-				printf("列印工時表\n");
-				total_working_hours_print(head);
-				continue;
-			}
-			default:
-			{
-				printf("輸入錯誤，請再輸入乙次。\n");
-				continue;
-			}
+		case(0):
+		{
+			printf("結束\n");
+			break;
+		}
+		case(1):
+		{
+			printf("請假系統\n");
+			leave_system(head);
+			continue;
+		}
+		case(2):
+		{
+			printf("列印班表\n");
+			print_calendar_list_console(head);
+			continue;
+		}
+		case(3):
+		{
+			printf("列印工時表\n");
+			total_working_hours_print(head);
+			continue;
+		}
+		default:
+		{
+			printf("輸入錯誤，請再輸入乙次。\n");
+			continue;
+		}
 		}
 
 		if (mode == 0)
@@ -689,16 +733,15 @@ void total_working_hours_print(list* head)
 
 			else if (strcmp(current->LEAVE_DM, dm_all[i]) == 0)
 			{
+				dm_working_hours[i] += working_hours_per_day;
+
 				int leave_index = i;
 				int do_index = search(current->DO_DM);
 				int j;
 				for (j = 0; j < DM_NUMS; j++)
 				{
 					if (j != leave_index && j != do_index)
-						dm_working_hours[j] += 4.0;
-
-					if (j == leave_index)
-						dm_working_hours[j] -= working_hours_per_day;
+						dm_working_hours[j] += working_hours_per_day / 2;
 				}
 			}
 		}
@@ -731,7 +774,7 @@ void total_working_hours_print(list* head)
 					int leave_index = i;
 					int do_index = search(current->DO_B);
 					int j;
-					for (j = 0; j < EMPLOYEE_NUMS; j+=2)
+					for (j = 0; j < EMPLOYEE_NUMS; j += 2)
 					{
 						if (j != leave_index && j != do_index)
 							dm_working_hours[j] += 4.0;
@@ -743,7 +786,7 @@ void total_working_hours_print(list* head)
 					int leave_index = i;
 					int do_index = search(current->DO_H);
 					int j;
-					for (j = 1; j < EMPLOYEE_NUMS; j+=2)
+					for (j = 1; j < EMPLOYEE_NUMS; j += 2)
 					{
 						if (j != leave_index && j != do_index)
 							dm_working_hours[j] += 4.0;
@@ -764,7 +807,9 @@ void total_working_hours_print(list* head)
 		printf("H  ==> %7s  %.1f hours\n", employee_all[2 * i + 1], employee_working_hours[2 * i + 1]);
 		printf("\n");
 	}
-	
+
+	test_hours(head);
+
 	//工時歸零
 	for (i = 0; i < DM_NUMS; i++)
 	{
@@ -772,6 +817,7 @@ void total_working_hours_print(list* head)
 		employee_working_hours[2 * i] = 0.0;
 		employee_working_hours[2 * i + 1] = 0.0;
 	}
+
 }
 
 void leave_system(list* head)
@@ -779,7 +825,7 @@ void leave_system(list* head)
 	int leave_day = 1;
 	list* current = head;
 	int mode_index;
-	int index;
+	int leave_index;
 	while (leave_day != 0)
 	{
 		printf("請輸入請假日期(5號，則輸入 5；結束請假系統請輸入 0 )：\n");
@@ -828,9 +874,33 @@ void leave_system(list* head)
 				printf("[%d]%s ", i, dm_all[i]);
 			printf("\n");
 
-			scanf("%d", &index);
+			scanf("%d", &leave_index);
 
-			strcpy(current->LEAVE_DM, dm_all[index]);
+			strcpy(current->LEAVE_DM, dm_all[leave_index]);				//新增資料至LEAVE欄位
+			
+			//更改原資料
+			if (strcmp(current->DS_DM, current->LEAVE_DM) == 0)			//早班主管更換
+			{
+				strcpy(current->DS_DM, current->ES_DM);
+				//午班主管更換
+				strcat(current->ES_DM, "/");
+				strcat(current->ES_DM, current->NS_DM);
+			}
+			if (strcmp(current->ES_DM, current->LEAVE_DM) == 0)			//午班主管更換
+			{
+				strcpy(current->ES_DM, current->DS_DM);
+				//午班主管更換
+				strcat(current->ES_DM, "/");
+				strcat(current->ES_DM, current->NS_DM);
+			}
+			if (strcmp(current->NS_DM, current->LEAVE_DM) == 0)			//晚班主管更換
+			{
+				strcpy(current->NS_DM, current->ES_DM);
+				//午班主管更換
+				strcpy(current->ES_DM, current->DS_DM);
+				strcat(current->ES_DM, "/");
+				strcat(current->ES_DM, current->NS_DM);
+			}
 		}
 		else if (mode_index == 1)
 		{
@@ -838,11 +908,60 @@ void leave_system(list* head)
 				printf("[%d]%s ", i, employee_all[i]);
 			printf("\n");
 
-			scanf("%d", &index);
-			if ((index % 2) == 0)								//B位置的工作人員
-				strcpy(current->LEAVE_B, employee_all[index]);
+			scanf("%d", &leave_index);
+			if ((leave_index % 2) == 0)									//B位置的工作人員
+			{
+				strcpy(current->LEAVE_B, employee_all[leave_index]);	//新增資料至LEAVE欄位
+				if (strcmp(current->DS_B, current->LEAVE_B) == 0)		//早班B位置員工更換
+				{
+					strcpy(current->DS_B, current->ES_B);
+
+					strcat(current->ES_B, "/");
+					strcat(current->ES_B, current->NS_B);
+				}
+				if (strcmp(current->ES_B, current->LEAVE_B) == 0)		//午班B位置員工更換
+				{
+					strcpy(current->ES_B, current->DS_B);
+
+					strcat(current->ES_B, "/");
+					strcat(current->ES_B, current->NS_B);
+				}
+				if (strcmp(current->NS_B, current->LEAVE_B) == 0)		//午班B位置員工更換
+				{
+					strcpy(current->NS_B, current->ES_B);
+
+					strcpy(current->ES_B, current->DS_B);
+					strcat(current->ES_B, "/");
+					strcat(current->ES_B, current->NS_B);
+				}
+
+			}
 			else												//H位置的工作人員
-				strcpy(current->LEAVE_H, employee_all[index]);
+			{
+				strcpy(current->LEAVE_H, employee_all[leave_index]);	//新增資料至LEAVE欄位
+				if (strcmp(current->DS_H, current->LEAVE_H) == 0)		//早班H位置員工更換
+				{
+					strcpy(current->DS_H, current->ES_H);
+
+					strcat(current->ES_H, "/");
+					strcat(current->ES_H, current->NS_H);
+				}
+				if (strcmp(current->ES_H, current->LEAVE_H) == 0)		//午班H位置員工更換
+				{
+					strcpy(current->ES_H, current->DS_H);
+
+					strcat(current->ES_H, "/");
+					strcat(current->ES_H, current->NS_H);
+				}
+				if (strcmp(current->NS_H, current->LEAVE_H) == 0)		//午班H位置員工更換
+				{
+					strcpy(current->NS_H, current->ES_H);
+
+					strcpy(current->ES_H, current->DS_H);
+					strcat(current->ES_H, "/");
+					strcat(current->ES_H, current->NS_H);
+				}
+			}
 		}
 		else
 		{
@@ -872,4 +991,31 @@ int search(char name[NAME_LEN])
 		return 0;
 	}
 	return index;
+}
+
+void test_hours(list* head)
+{
+	printf("\n\n");
+	list* current = head;
+	while (current != NULL)
+	{
+		printf("%.1f %.1f %.1f |%.1f %.1f %.1f |%.1f %.1f %.1f |%.1f %.1f %.1f |%.1f %.1f %.1f\n"
+			, current->DO_DM_WORKING_HOURS
+			, current->DO_B_WORKING_HOURS
+			, current->DO_H_WORKING_HOURS
+			, current->ES_DM_WORKING_HOURS
+			, current->ES_B_WORKING_HOURS
+			, current->ES_H_WORKING_HOURS
+			, current->NS_DM_WORKING_HOURS
+			, current->NS_B_WORKING_HOURS
+			, current->NS_H_WORKING_HOURS
+			, current->DO_DM_WORKING_HOURS
+			, current->DO_B_WORKING_HOURS
+			, current->DO_H_WORKING_HOURS
+			, current->LEAVE_DM_WORKING_HOURS
+			, current->LEAVE_B_WORKING_HOURS
+			, current->LEAVE_H_WORKING_HOURS
+		);
+		current = current->next;
+	}
 }
