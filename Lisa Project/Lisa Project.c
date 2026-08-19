@@ -620,8 +620,22 @@ void working_hours_daily(list* head)
 				current->DO_DM_WORKING_HOURS = 0.0;
 
 			else if (strcmp(current->LEAVE_DM, dm_all[i]) == 0)
-			{
-				current->LEAVE_DM_WORKING_HOURS = -working_hours_per_day;
+			{//錯誤需修復，原先的已經被蓋掉了
+				if (strcmp(current->LEAVE_DM, current->DS_DM) == 0)					//早班主管請假
+				{
+					current->ES_DM_WORKING_HOURS += working_hours_per_day / 2.0;
+					current->NS_DM_WORKING_HOURS += working_hours_per_day / 2.0;
+				}
+				else if (strcmp(current->LEAVE_DM, current->ES_DM) == 0)			//午班主管請假
+				{
+					current->DS_DM_WORKING_HOURS += working_hours_per_day / 2.0;
+					current->NS_DM_WORKING_HOURS += working_hours_per_day / 2.0;
+				}
+				else if (strcmp(current->LEAVE_DM, current->NS_DM) == 0)			//晚班主管請假
+				{
+					current->DS_DM_WORKING_HOURS += working_hours_per_day / 2.0;
+					current->ES_DM_WORKING_HOURS += working_hours_per_day / 2.0;
+				}
 			}
 
 			else
@@ -728,10 +742,10 @@ void total_working_hours_print(list* head)
 			else if (strcmp(current->NS_DM, dm_all[i]) == 0)
 				dm_working_hours[i] += current->NS_DM_WORKING_HOURS;
 
-			else if (strcmp(current->DO_DM, dm_all[i]) == 0)
-				dm_working_hours[i] += current->DO_DM_WORKING_HOURS;
+			/*else if (strcmp(current->DO_DM, dm_all[i]) == 0)
+				dm_working_hours[i] += current->DO_DM_WORKING_HOURS;*/
 
-			else if (strcmp(current->LEAVE_DM, dm_all[i]) == 0)
+			/*else if (strcmp(current->LEAVE_DM, dm_all[i]) == 0)
 			{
 				dm_working_hours[i] += working_hours_per_day;
 
@@ -743,7 +757,7 @@ void total_working_hours_print(list* head)
 					if (j != leave_index && j != do_index)
 						dm_working_hours[j] += working_hours_per_day / 2;
 				}
-			}
+			}*/
 		}
 
 		//EMPLOYEE工時
