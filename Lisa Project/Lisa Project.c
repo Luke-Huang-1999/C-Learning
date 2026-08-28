@@ -140,7 +140,9 @@ int main()
 	operation_system(head, year, month);
 
 
-
+	//釋放記憶體
+	free(head);
+	head = NULL;
 
 	//total_working_hours_print(head);
 
@@ -389,28 +391,7 @@ list* create_calendar_list_console(int year, int month, node cale[CAL_ROWS][CAL_
 
 
 	working_hours_daily(head);
-	//test working_hours_daily
-	//int i = 1;
-	//current = head;
-	//while (current != NULL)
-	//{
-	//	printf("第%2d天 ", i++);
-	//	printf("%2.1f,%2.1f,%2.1f,   %2.1f,%2.1f,%2.1f,   %2.1f,%2.1f,%2.1f,   %2.1f,%2.1f,%2.1f\n",
-	//		current->DS_DM_WORKING_HOURS,
-	//		current->DS_B_WORKING_HOURS,
-	//		current->DS_H_WORKING_HOURS,
-	//		current->ES_DM_WORKING_HOURS,
-	//		current->ES_B_WORKING_HOURS,
-	//		current->ES_H_WORKING_HOURS,
-	//		current->NS_DM_WORKING_HOURS,
-	//		current->NS_B_WORKING_HOURS,
-	//		current->NS_H_WORKING_HOURS,
-	//		current->DO_DM_WORKING_HOURS,
-	//		current->DO_B_WORKING_HOURS,
-	//		current->DO_H_WORKING_HOURS
-	//		);
-	//	current = current->next;
-	//}
+
 
 	return head;
 }
@@ -605,6 +586,9 @@ void working_hours_daily(list* head)
 	list* current = head;
 	while (current != NULL)
 	{
+		current->LEAVE_DM_WORKING_HOURS = 0.0;
+		current->LEAVE_B_WORKING_HOURS = 0.0;
+		current->LEAVE_H_WORKING_HOURS = 0.0;
 		for (i = 0; i < DM_NUMS; i++)
 		{
 			if (strcmp(current->DS_DM, dm_all[i]) == 0)
@@ -637,10 +621,8 @@ void working_hours_daily(list* head)
 					current->ES_DM_WORKING_HOURS += working_hours_per_day / 2.0;
 				}
 			}
-
-			else
-				current->LEAVE_DM_WORKING_HOURS = 0.0;
 		}
+
 		for (i = 0; i < EMPLOYEE_NUMS; i++)
 		{
 			if (strcmp(current->DS_B, employee_all[i]) == 0)
@@ -726,6 +708,7 @@ void operation_system(list* head, int year, int month)
 
 void total_working_hours_print(list* head)
 {
+
 	list* current = head;
 	int i;
 	while (current != NULL)
@@ -1014,9 +997,9 @@ void test_hours(list* head)
 	while (current != NULL)
 	{
 		printf("%.1f %.1f %.1f |%.1f %.1f %.1f |%.1f %.1f %.1f |%.1f %.1f %.1f |%.1f %.1f %.1f\n"
-			, current->DO_DM_WORKING_HOURS
-			, current->DO_B_WORKING_HOURS
-			, current->DO_H_WORKING_HOURS
+			, current->DS_DM_WORKING_HOURS
+			, current->DS_B_WORKING_HOURS
+			, current->DS_H_WORKING_HOURS
 			, current->ES_DM_WORKING_HOURS
 			, current->ES_B_WORKING_HOURS
 			, current->ES_H_WORKING_HOURS
