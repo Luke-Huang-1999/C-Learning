@@ -3,10 +3,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-/*
-工作天數 加班天數 休息天數 請假天數
-*/
-
 #define CAL_ROWS 6						//6行
 #define CAL_COLS 7						//一週7天
 #define EMPLOYEE_NUMS 8					//員工人數
@@ -106,6 +102,9 @@ void working_hours_daily(list* head);
 void operation_system(list* head, int year, int month);
 
 //()該月工時總計(list型態的首區塊指標)
+void total_working_hours_calculate(list* head);
+
+//()列印工時(list型態的首區塊指標)
 void total_working_hours_print(list* head);
 
 //請假系統()
@@ -113,6 +112,17 @@ void leave_system(list* head);
 
 //(索引值)名字搜尋索引值(一維陣列, 一維陣列)
 int search(char name[NAME_LEN]);
+
+//()處理請假與替代人員安排(list型態的首區塊指標)；該函數會確認是否有兩人一班的情況(即為加班)，並對兩人的原工時之外再增加加班時數。
+void handle_leave_replacement(list* head);
+
+//()請假欄位的工時歸零(list型態的首區塊指標)
+void initialize_leave_wt(list* head);
+
+//()分隔線(長度)
+void dividing_line(int cnt);
+
+void list_first_line();
 
 void test_hours(list* head);
 
@@ -406,16 +416,8 @@ void print_calendar_list_console(list* head)
 
 	//建立標題
 	int i;
-	printf("%*s%*s%*s%*s%*s%*s%*s\n"
-		, LIST_DATE_LEN, "Date"
-		, LIST_DATE_LEN, "Week"
-		, LIST_NAME_LEN * 3, shift[0]
-		, LIST_NAME_LEN * 3, shift[1]
-		, LIST_NAME_LEN * 3, shift[2]
-		, LIST_NAME_LEN * 3, "Day-off"
-		, LIST_NAME_LEN * 3, "Leave");
-	for (i = 0; i < 160; i++)
-		printf("=");
+	list_first_line();
+	dividing_line(160);
 	printf("\n");
 	printf("%10s", " ");
 	for (i = 0; i < 5; i++)
@@ -426,8 +428,7 @@ void print_calendar_list_console(list* head)
 			, LIST_NAME_LEN, parts[2]);
 	}
 	printf("\n");
-	for (i = 0; i < 160; i++)
-		printf("=");
+	dividing_line(160);
 	printf("\n");
 
 	list* current = head;
@@ -440,9 +441,7 @@ void print_calendar_list_console(list* head)
 		printf("%*s%*s%*s", LIST_NAME_LEN, current->DO_DM, LIST_NAME_LEN, current->DO_B, LIST_NAME_LEN, current->DO_H);
 		printf("%*s%*s%*s", LIST_NAME_LEN, current->LEAVE_DM, LIST_NAME_LEN, current->LEAVE_B, LIST_NAME_LEN, current->LEAVE_H);
 		printf("\n");
-		//for (i = 0; i < 166; i++)
-		//	printf("-");
-		//printf("\n");
+		//指標移動
 		current = current->next;
 	}
 	printf("\n");
@@ -461,27 +460,32 @@ int month_days(int year, int month)
 	case 8:
 	case 10:
 	case 12:
+	{
 		days = 31;
 		break;
+	}
 
 	case 4:
 	case 6:
 	case 9:
 	case 11:
+	{
 		days = 30;
 		break;
+	}
 
 	case 2:
+	{
 		if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0)
 			days = 29;
 		else
 			days = 28;
 		break;
+	}
 
 	default:
 		return 0;
 	}
-
 	return days;
 }
 
@@ -580,15 +584,24 @@ list* create_list(int month, int day, char week[5], char DS_DM[10], char DS_B[10
 	return newnode;
 }
 
+void initialize_leave_wt(list* head)
+{
+	list* current = head;
+	current->LEAVE_DM_WORKING_HOURS = 0.0;
+	current->LEAVE_B_WORKING_HOURS = 0.0;
+	current->LEAVE_H_WORKING_HOURS = 0.0;
+	return;
+}
+
 void working_hours_daily(list* head)
 {
 	int i;
 	list* current = head;
 	while (current != NULL)
 	{
-		current->LEAVE_DM_WORKING_HOURS = 0.0;
-		current->LEAVE_B_WORKING_HOURS = 0.0;
-		current->LEAVE_H_WORKING_HOURS = 0.0;
+
+		initialize_leave_wt(head);
+
 		for (i = 0; i < DM_NUMS; i++)
 		{
 			if (strcmp(current->DS_DM, dm_all[i]) == 0)
@@ -602,25 +615,6 @@ void working_hours_daily(list* head)
 
 			else if (strcmp(current->DO_DM, dm_all[i]) == 0)
 				current->DO_DM_WORKING_HOURS = 0.0;
-
-			else if (strcmp(current->LEAVE_DM, dm_all[i]) == 0)
-			{//錯誤需修復，原先的已經被蓋掉了
-				if (strcmp(current->LEAVE_DM, current->DS_DM) == 0)					//早班主管請假
-				{
-					current->ES_DM_WORKING_HOURS += working_hours_per_day / 2.0;
-					current->NS_DM_WORKING_HOURS += working_hours_per_day / 2.0;
-				}
-				else if (strcmp(current->LEAVE_DM, current->ES_DM) == 0)			//午班主管請假
-				{
-					current->DS_DM_WORKING_HOURS += working_hours_per_day / 2.0;
-					current->NS_DM_WORKING_HOURS += working_hours_per_day / 2.0;
-				}
-				else if (strcmp(current->LEAVE_DM, current->NS_DM) == 0)			//晚班主管請假
-				{
-					current->DS_DM_WORKING_HOURS += working_hours_per_day / 2.0;
-					current->ES_DM_WORKING_HOURS += working_hours_per_day / 2.0;
-				}
-			}
 		}
 
 		for (i = 0; i < EMPLOYEE_NUMS; i++)
@@ -650,10 +644,9 @@ void working_hours_daily(list* head)
 			else if (strcmp(current->LEAVE_H, employee_all[i]) == 0)
 				current->LEAVE_H_WORKING_HOURS = -working_hours_per_day;
 		}
-
+		//指標移動
 		current = current->next;
 	}
-
 }
 
 void operation_system(list* head, int year, int month)
@@ -674,41 +667,35 @@ void operation_system(list* head, int year, int month)
 		}
 		case(1):
 		{
-			printf("請假系統\n");
+			printf("******請假系統******\n");
 			leave_system(head);
 			continue;
 		}
 		case(2):
 		{
-			printf("列印班表\n");
+			printf("******列印班表******\n");
 			print_calendar_list_console(head);
 			continue;
 		}
 		case(3):
 		{
-			printf("列印工時表\n");
+			printf("******列印工時表******\n");
 			total_working_hours_print(head);
 			continue;
 		}
 		default:
 		{
-			printf("輸入錯誤，請再輸入乙次。\n");
+			printf("******輸入錯誤，請再輸入乙次。******\n");
 			continue;
 		}
 		}
-
 		if (mode == 0)
 			break;
-
-
-
 	}
-
 }
 
-void total_working_hours_print(list* head)
+void total_working_hours_calculate(list* head)
 {
-
 	list* current = head;
 	int i;
 	while (current != NULL)
@@ -724,23 +711,6 @@ void total_working_hours_print(list* head)
 
 			else if (strcmp(current->NS_DM, dm_all[i]) == 0)
 				dm_working_hours[i] += current->NS_DM_WORKING_HOURS;
-
-			/*else if (strcmp(current->DO_DM, dm_all[i]) == 0)
-				dm_working_hours[i] += current->DO_DM_WORKING_HOURS;*/
-
-			/*else if (strcmp(current->LEAVE_DM, dm_all[i]) == 0)
-			{
-				dm_working_hours[i] += working_hours_per_day;
-
-				int leave_index = i;
-				int do_index = search(current->DO_DM);
-				int j;
-				for (j = 0; j < DM_NUMS; j++)
-				{
-					if (j != leave_index && j != do_index)
-						dm_working_hours[j] += working_hours_per_day / 2;
-				}
-			}*/
 		}
 
 		//EMPLOYEE工時
@@ -763,49 +733,17 @@ void total_working_hours_print(list* head)
 
 			else if (strcmp(current->NS_H, employee_all[i]) == 0)
 				employee_working_hours[i] += current->NS_H_WORKING_HOURS;
-
-			else if (strcmp(current->LEAVE_DM, dm_all[i]) == 0)
-			{
-				if (i % 2 == 0)													//BRINE
-				{
-					int leave_index = i;
-					int do_index = search(current->DO_B);
-					int j;
-					for (j = 0; j < EMPLOYEE_NUMS; j += 2)
-					{
-						if (j != leave_index && j != do_index)
-							dm_working_hours[j] += 4.0;
-					}
-				}
-
-				if (i % 2 != 0)													//HCl
-				{
-					int leave_index = i;
-					int do_index = search(current->DO_H);
-					int j;
-					for (j = 1; j < EMPLOYEE_NUMS; j += 2)
-					{
-						if (j != leave_index && j != do_index)
-							dm_working_hours[j] += 4.0;
-					}
-				}
-
-
-			}
 		}
 		current = current->next;
 	}
 
-	//列印
-	for (i = 0; i < DM_NUMS; i++)
-	{
-		printf("DM ==> %7s  %.1f hours\n", dm_all[i], dm_working_hours[i]);
-		printf("B  ==> %7s  %.1f hours\n", employee_all[2 * i], employee_working_hours[2 * i]);
-		printf("H  ==> %7s  %.1f hours\n", employee_all[2 * i + 1], employee_working_hours[2 * i + 1]);
-		printf("\n");
-	}
+	//加班人員工時新增
+	handle_leave_replacement(head);
 
-	test_hours(head);
+	//列印
+	total_working_hours_print(head);
+
+	//test_hours(head);
 
 	//工時歸零
 	for (i = 0; i < DM_NUMS; i++)
@@ -814,7 +752,27 @@ void total_working_hours_print(list* head)
 		employee_working_hours[2 * i] = 0.0;
 		employee_working_hours[2 * i + 1] = 0.0;
 	}
+}
 
+void total_working_hours_print(list* head)
+{
+	int i;
+	for (i = 0; i < DM_NUMS; i++)
+	{
+		printf("DM ==>%7s  %.1f hours = %.1f days\n"
+			, dm_all[i]
+			, dm_working_hours[i]
+			, dm_working_hours[i] / working_hours_per_day);
+		printf("B  ==>%7s  %.1f hours = %.1f days\n"
+			, employee_all[2 * i]
+			, employee_working_hours[2 * i]
+			, employee_working_hours[2 * i] / working_hours_per_day);
+		printf("H  ==>%7s  %.1f hours = %.1f days\n"
+			, employee_all[2 * i + 1]
+			, employee_working_hours[2 * i + 1]
+			, employee_working_hours[2 * +1] / working_hours_per_day);
+		printf("\n");
+	}
 }
 
 void leave_system(list* head)
@@ -839,9 +797,8 @@ void leave_system(list* head)
 
 		//建立標題
 		int i;
-		printf("%5s%5s%30s%30s%30s%30s%30s\n", "date", "week", shift[0], shift[1], shift[2], "Day-off", "Leave");
-		for (i = 0; i < 160; i++)
-			printf("=");
+		list_first_line();
+		dividing_line(160);
 
 		printf("\n");
 		printf("%10s", " ");
@@ -849,8 +806,7 @@ void leave_system(list* head)
 			printf("%10s%10s%10s", parts[0], parts[1], parts[2]);
 
 		printf("\n");
-		for (i = 0; i < 160; i++)
-			printf("=");
+		dividing_line(160);
 		printf("\n");
 
 		printf("%2d/%2d%5s", current->month, current->day, current->week);
@@ -865,7 +821,7 @@ void leave_system(list* head)
 		scanf("%d", &mode_index);
 
 		printf("請輸入請假人員姓名：");
-		if (mode_index == 0)									//DM請假
+		if (mode_index == 0)											//DM請假
 		{
 			for (i = 0; i < DM_NUMS; i++)
 				printf("[%d]%s ", i, dm_all[i]);
@@ -874,7 +830,7 @@ void leave_system(list* head)
 			scanf("%d", &leave_index);
 
 			strcpy(current->LEAVE_DM, dm_all[leave_index]);				//新增資料至LEAVE欄位
-			
+
 			//更改原資料
 			if (strcmp(current->DS_DM, current->LEAVE_DM) == 0)			//早班主管更換
 			{
@@ -933,7 +889,7 @@ void leave_system(list* head)
 				}
 
 			}
-			else												//H位置的工作人員
+			else														//H位置的工作人員
 			{
 				strcpy(current->LEAVE_H, employee_all[leave_index]);	//新增資料至LEAVE欄位
 				if (strcmp(current->DS_H, current->LEAVE_H) == 0)		//早班H位置員工更換
@@ -988,6 +944,114 @@ int search(char name[NAME_LEN])
 		return 0;
 	}
 	return index;
+}
+
+void handle_leave_replacement(list* head)
+{
+	list* current = head;
+	int i;
+	while (current != NULL)
+	{
+		//尋找兩人共同分擔的班別-主管
+		if (strstr(current->DS_DM, "/"))
+		{
+			for (i = 0; i < DM_NUMS; i++)
+			{
+				if (strstr(current->DS_DM, dm_all[i]))
+					dm_working_hours[i] += working_hours_per_day / 2.0;
+			}
+		}
+		else if (strstr(current->ES_DM, "/"))
+		{
+			for (i = 0; i < DM_NUMS; i++)
+			{
+				if (strstr(current->ES_DM, dm_all[i]))
+					dm_working_hours[i] += working_hours_per_day / 2.0;
+			}
+		}
+		else if (strstr(current->NS_DM, "/"))
+		{
+			for (i = 0; i < DM_NUMS; i++)
+			{
+				if (strstr(current->NS_DM, dm_all[i]))
+					dm_working_hours[i] += working_hours_per_day / 2.0;
+			}
+		}
+		//尋找兩人共同分擔的班別-Brine
+		if (strstr(current->DS_B, "/"))
+		{
+			for (i = 0; i < EMPLOYEE_NUMS; i++)
+			{
+				if (strstr(current->DS_B, employee_all[i]))
+					employee_working_hours[i] += working_hours_per_day / 2.0;
+			}
+		}
+		else if (strstr(current->ES_B, "/"))
+		{
+			for (i = 0; i < EMPLOYEE_NUMS; i++)
+			{
+				if (strstr(current->ES_B, employee_all[i]))
+					employee_working_hours[i] += working_hours_per_day / 2.0;
+			}
+		}
+		else if (strstr(current->NS_B, "/"))
+		{
+			for (i = 0; i < EMPLOYEE_NUMS; i++)
+			{
+				if (strstr(current->NS_B, employee_all[i]))
+					employee_working_hours[i] += working_hours_per_day / 2.0;
+			}
+		}
+
+		//尋找兩人共同分擔的班別-HCl
+		if (strstr(current->DS_H, "/"))
+		{
+			for (i = 0; i < EMPLOYEE_NUMS; i++)
+			{
+				if (strstr(current->DS_H, employee_all[i]))
+					employee_working_hours[i] += working_hours_per_day / 2.0;
+			}
+		}
+		else if (strstr(current->ES_H, "/"))
+		{
+			for (i = 0; i < EMPLOYEE_NUMS; i++)
+			{
+				if (strstr(current->ES_H, employee_all[i]))
+					employee_working_hours[i] += working_hours_per_day / 2.0;
+			}
+		}
+		else if (strstr(current->NS_H, "/"))
+		{
+			for (i = 0; i < EMPLOYEE_NUMS; i++)
+			{
+				if (strstr(current->NS_H, employee_all[i]))
+					employee_working_hours[i] += working_hours_per_day / 2.0;
+			}
+		}
+
+		//指標移動
+		current = current->next;
+	}
+}
+
+void dividing_line(int cnt)
+{
+	int i;
+	for (i = 0; i < cnt; i++)
+		printf("=");
+}
+
+void list_first_line()
+{
+	//printf("%5s%5s%30s%30s%30s%30s%30s\n", "Date", "Week", shift[0], shift[1], shift[2], "Day-off", "Leave");
+	printf("%*s%*s%*s%*s%*s%*s%*s\n"
+		, LIST_DATE_LEN, "Date"
+		, LIST_DATE_LEN, "Week"
+		, LIST_NAME_LEN * 3, shift[0]
+		, LIST_NAME_LEN * 3, shift[1]
+		, LIST_NAME_LEN * 3, shift[2]
+		, LIST_NAME_LEN * 3, "Day-off"
+		, LIST_NAME_LEN * 3, "Leave");
 }
 
 void test_hours(list* head)
