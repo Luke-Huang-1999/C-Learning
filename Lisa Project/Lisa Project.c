@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include<time.h>
 
 #define CAL_ROWS 6						//6行
 #define CAL_COLS 7						//一週7天
@@ -126,6 +127,10 @@ void list_first_line();
 
 void test_hours(list* head);
 
+void free_list(list* head);
+
+void first_time(int* year, int* month, int* ds_dm_index, int* ds_dm_workday);
+
 int main()
 {
 	//宣告變數
@@ -138,7 +143,7 @@ int main()
 	int personal_leave = 0;
 	//1.接收初始資訊
 	//receive_data(&year, &month, &ds_dm_index, &ds_dm_workday);
-
+	first_time(&year, &month, &ds_dm_index, &ds_dm_workday);
 	//生成月曆
 	list* head = create_calendar_list_console(year, month, cale, ds_dm_index, ds_dm_workday);
 
@@ -151,10 +156,8 @@ int main()
 
 
 	//釋放記憶體
-	free(head);
+	free_list(head);
 	head = NULL;
-
-	//total_working_hours_print(head);
 
 	//system("pause");
 
@@ -177,6 +180,7 @@ void receive_data(int* year, int* month, int* ds_dm_index, int* ds_dm_workday)
 	printf("請輸入第一天早班主管值班第N天：(例如==> 1)\n");
 	scanf("%d", ds_dm_workday);
 
+	return;
 }
 
 int Zeller(int year, int month)
@@ -1079,4 +1083,55 @@ void test_hours(list* head)
 		);
 		current = current->next;
 	}
+}
+
+void free_list(list* head)
+{
+	//宣告
+	list* temp = head;
+	list* current = head;
+
+	//釋放記憶體空間
+	while (current != head)
+	{
+		temp = current;
+		current = current->next;
+		free(temp);
+	}
+}
+
+void first_time(int* year, int* month, int* ds_dm_index, int* ds_dm_workday)
+{
+	//宣告
+	time_t now;
+	struct tm* current;
+
+	//取得目前的時間，並回傳一個 time_t 型別的時間值。
+	now = time(NULL);
+
+	//把 time_t 的時間戳轉換成 struct tm 格式。
+	current = localtime(&now);
+
+	//取得當下年月
+	*year = current->tm_year + 1900;
+	*month = current->tm_mon + 1;
+
+	//要處理下個月份的班表
+	(*month)++;
+
+	//若大於12月，則進入明年1月
+	if (*month > 12)
+	{
+		(*year)++;
+		*month = 1;
+	}
+
+
+	printf("========== 主管名單 ==========\n\n");
+	printf("[0] Alice\n[1] David\n[2] Grog\n[3] Jackson\n\n");
+	printf("(1/2)請輸入第一天早班主管編號(例如==> 1)：");
+	scanf("%d", ds_dm_index);
+
+	printf("(2/2)請輸入第一天早班主管值班第N天(例如==> 1)：");
+	scanf("%d", ds_dm_workday);
 }

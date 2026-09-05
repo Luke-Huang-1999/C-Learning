@@ -1,27 +1,20 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
-
-typedef struct data
-{
-	char data0[20];
-	char data1[20];
-	char data2[20];
-	char data3[20];
-	char data4[20];
-	char name_list[5][10];
-}node;
+#include <stdio.h>
+#include <time.h>
 
 int main()
 {
-	char str_1[20] = { "Alice" };
-	char str_2[20] = { "Due" };
+    time_t now;
+    struct tm* current;
 
-	int a = 5;
-	a = strcmp(str_1, "Ali");
-	printf("%d", a);
-	//strcpy(str_1, str_2);
-	return 0;
+    now = time(NULL);
+
+    current = localtime(&now);
+    
+    printf("年份：%d\n", current->tm_year + 1900);
+    printf("月份：%d\n", current->tm_mon + 1);
+    printf("日期：%d\n", current->tm_mday);
+
+    return 0;
 }
 
