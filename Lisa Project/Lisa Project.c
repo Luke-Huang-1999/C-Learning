@@ -129,6 +129,8 @@ void test_hours(list* head);
 
 void free_list(list* head);
 
+void first_time_dm_info(int* ds_dm_index, int* ds_dm_workday);
+
 void first_time(int* year, int* month, int* ds_dm_index, int* ds_dm_workday);
 
 int main()
@@ -171,14 +173,7 @@ void receive_data(int* year, int* month, int* ds_dm_index, int* ds_dm_workday)
 
 	printf("\n");
 
-	printf("[0]Alice [1]David [2]Grog [3]Jackson\n");
-	printf("請輸入第一天早班主管編號：(例如==> 1)\n");
-	scanf("%d", ds_dm_index);
-
-	printf("\n");
-
-	printf("請輸入第一天早班主管值班第N天：(例如==> 1)\n");
-	scanf("%d", ds_dm_workday);
+	first_time_dm_info(ds_dm_index, ds_dm_workday);
 
 	return;
 }
@@ -658,7 +653,7 @@ void operation_system(list* head, int year, int month)
 	int mode;
 	while (1)
 	{
-		printf("操作系統選擇：[0]=>結束   [1]請假系統   [2]列印班表   [3]列印工時表\n");
+		printf("操作系統選擇：[0]=>快速生成下個月班表   [1]請假系統   [2]列印特定班表   [3]列印工時表   [4]結束\n");
 		printf("==> ");
 		scanf("%d", &mode);
 
@@ -1085,6 +1080,24 @@ void test_hours(list* head)
 	}
 }
 
+void first_time_dm_info(int* ds_dm_index, int* ds_dm_workday)
+{
+	int i;
+	printf("========== 主管名單 ==========\n\n");
+
+	//列印主管編號與姓名
+	for (i = 0; i < DM_NUMS; i++)
+		printf("[%d] %s\n", i, dm_all[i]);
+	
+	printf("\n(1/2)請輸入第一天早班主管編號(例如==> 1)：");
+	scanf("%d", ds_dm_index);
+
+	printf("(2/2)請輸入第一天早班主管值班第N天(例如==> 1)：");
+	scanf("%d", ds_dm_workday);
+
+	return;
+}
+
 void free_list(list* head)
 {
 	//宣告
@@ -1126,12 +1139,8 @@ void first_time(int* year, int* month, int* ds_dm_index, int* ds_dm_workday)
 		*month = 1;
 	}
 
+	//接收第一天主管是誰與上第幾天班
+	first_time_dm_info(ds_dm_index, ds_dm_workday);
 
-	printf("========== 主管名單 ==========\n\n");
-	printf("[0] Alice\n[1] David\n[2] Grog\n[3] Jackson\n\n");
-	printf("(1/2)請輸入第一天早班主管編號(例如==> 1)：");
-	scanf("%d", ds_dm_index);
-
-	printf("(2/2)請輸入第一天早班主管值班第N天(例如==> 1)：");
-	scanf("%d", ds_dm_workday);
+	return;
 }
