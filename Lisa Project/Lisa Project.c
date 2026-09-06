@@ -82,7 +82,7 @@ int Zeller(int year, int month);
 void create_calendar_chart(int year, int month, node cale[CAL_ROWS][CAL_COLS]);
 
 //()建立月曆(當年當月的1號星期幾)
-list* create_calendar_list_console(int year, int month, node cale[CAL_ROWS][CAL_COLS], int ds_dm_index, int ds_dm_workday);
+list* create_calendar_list_console(int year, int month, int ds_dm_index, int ds_dm_workday);
 
 //()列印月曆(月曆的首指標)
 void print_calendar_list_console(list* head);
@@ -100,7 +100,7 @@ list* create_list(int month, int day, char week[5], char DS_DM[10], char DS_B[10
 void working_hours_daily(list* head);
 
 //()操作系統(list型態的首區塊指標, 年, 月)
-void operation_system(list* head, int year, int month);
+void operation_system(list* head, int year, int month, int* ds_dm_index, int* ds_dm_workday);
 
 //()該月工時總計(list型態的首區塊指標)
 void total_working_hours_calculate(list* head);
@@ -138,6 +138,7 @@ int main()
 	//宣告變數
 	int year, month;
 	node cale[CAL_ROWS][CAL_COLS] = { 0 };
+	list* head = NULL;
 	year = 2026;
 	month = 8;
 	int ds_dm_index = 2;
@@ -145,16 +146,14 @@ int main()
 	int personal_leave = 0;
 	//1.接收初始資訊
 	//receive_data(&year, &month, &ds_dm_index, &ds_dm_workday);
-	first_time(&year, &month, &ds_dm_index, &ds_dm_workday);
+	
 	//生成月曆
-	list* head = create_calendar_list_console(year, month, cale, ds_dm_index, ds_dm_workday);
-
-	//列印月曆
-	print_calendar_list_console(head);
+	//list* head = create_calendar_list_console(year, month, cale, ds_dm_index, ds_dm_workday);
+	
 	printf("\n");
 
 	//操作系統
-	operation_system(head, year, month);
+	operation_system(head, year, month, ds_dm_index, ds_dm_workday);
 
 
 	//釋放記憶體
@@ -170,8 +169,6 @@ void receive_data(int* year, int* month, int* ds_dm_index, int* ds_dm_workday)
 {
 	printf("請輸入年份與月份：(例如 ==> 2026 8)\n");
 	scanf("%d %d", year, month);
-
-	printf("\n");
 
 	first_time_dm_info(ds_dm_index, ds_dm_workday);
 
@@ -278,7 +275,7 @@ void create_calendar_chart(int year, int month, node cale[CAL_ROWS][CAL_COLS])
 
 }
 
-list* create_calendar_list_console(int year, int month, node cale[CAL_ROWS][CAL_COLS], int ds_dm_index, int ds_dm_workday)
+list* create_calendar_list_console(int year, int month, int ds_dm_index, int ds_dm_workday)
 {
 	int week = Zeller(year, month); //第一天星期幾 6[5]
 	int day_max = month_days(year, month);//總天數
@@ -301,7 +298,7 @@ list* create_calendar_list_console(int year, int month, node cale[CAL_ROWS][CAL_
 	int ns_employee_index = ns_dm_index * 2;//晚班員工係數4
 	int do_employee_index = do_dm_index * 2;//輪休員工係數6
 
-	list* head = NULL;//開頭指標指向1號
+	list* head = NULL;
 	list* current = NULL;
 	list* newnode = NULL;
 
@@ -409,7 +406,7 @@ void print_calendar_list_console(list* head)
 {
 	if (head == NULL)
 	{
-		printf("calendar list is not exit.\n");
+		printf("Shift schedule is not exit.\n");
 		exit(1);
 	}
 
@@ -443,7 +440,7 @@ void print_calendar_list_console(list* head)
 		//指標移動
 		current = current->next;
 	}
-	printf("\n");
+	printf("\n\n");
 }
 
 int month_days(int year, int month)
@@ -648,7 +645,7 @@ void working_hours_daily(list* head)
 	}
 }
 
-void operation_system(list* head, int year, int month)
+void operation_system(list* head, int year, int month, int* ds_dm_index, int* ds_dm_workday)
 {
 	int mode;
 	while (1)
@@ -656,31 +653,43 @@ void operation_system(list* head, int year, int month)
 		printf("操作系統選擇：[0]=>快速生成下個月班表   [1]請假系統   [2]列印特定班表   [3]列印工時表   [4]結束\n");
 		printf("==> ");
 		scanf("%d", &mode);
-
+		printf("\n\n");
 		switch (mode)
 		{
 		case(0):
 		{
-			printf("結束\n");
-			break;
+			printf("****** 快速生成下個月班表 ******\n");
+			
+			first_time(&year, &month, &ds_dm_index, &ds_dm_workday);							//獲取系統時間，推算下個月
+			
+			head = create_calendar_list_console(year, month, ds_dm_index, ds_dm_workday);		//生成月曆
+			
+			print_calendar_list_console(head);													//列印月曆
+
+			continue;
 		}
 		case(1):
 		{
-			printf("******請假系統******\n");
+			printf("****** 請假系統 ******\n");
 			leave_system(head);
 			continue;
 		}
 		case(2):
 		{
-			printf("******列印班表******\n");
+			printf("****** 列印班表 ******\n");
 			print_calendar_list_console(head);
 			continue;
 		}
 		case(3):
 		{
-			printf("******列印工時表******\n");
+			printf("****** 列印工時表 ******\n");
 			total_working_hours_print(head);
 			continue;
+		}
+		case(4):
+		{
+			printf("****** 結束 ******\n");
+			break;
 		}
 		default:
 		{
