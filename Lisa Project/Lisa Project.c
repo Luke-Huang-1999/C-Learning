@@ -133,6 +133,10 @@ void first_time_dm_info(int* ds_dm_index, int* ds_dm_workday);
 
 void first_time(int* year, int* month, int* ds_dm_index, int* ds_dm_workday);
 
+void working_hour_zero(float dm_working_hours[DM_NUMS], float employee_working_hours[EMPLOYEE_NUMS]);
+
+void check_delete_head(list* head);
+
 int main()
 {
 	//宣告變數
@@ -144,17 +148,9 @@ int main()
 	int ds_dm_index = 2;
 	int ds_dm_workday = 4;
 	int personal_leave = 0;
-	//1.接收初始資訊
-	//receive_data(&year, &month, &ds_dm_index, &ds_dm_workday);
-	
-	//生成月曆
-	//list* head = create_calendar_list_console(year, month, cale, ds_dm_index, ds_dm_workday);
-	
-	printf("\n");
 
 	//操作系統
 	operation_system(head, year, month, ds_dm_index, ds_dm_workday);
-
 
 	//釋放記憶體
 	free_list(head);
@@ -169,7 +165,7 @@ void receive_data(int* year, int* month, int* ds_dm_index, int* ds_dm_workday)
 {
 	printf("請輸入年份與月份：(例如 ==> 2026 8)\n");
 	scanf("%d %d", year, month);
-
+	printf("\n");
 	first_time_dm_info(ds_dm_index, ds_dm_workday);
 
 	return;
@@ -659,31 +655,48 @@ void operation_system(list* head, int year, int month, int* ds_dm_index, int* ds
 		case(0):
 		{
 			printf("****** 快速生成下個月班表 ******\n");
-			
-			first_time(&year, &month, &ds_dm_index, &ds_dm_workday);							//獲取系統時間，推算下個月
-			
-			head = create_calendar_list_console(year, month, ds_dm_index, ds_dm_workday);		//生成月曆
-			
-			print_calendar_list_console(head);													//列印月曆
-
+			//確認是否有已生成的班表，若有則刪除並生成新班表
+			check_delete_head(head);
+			//獲取系統時間，推算下個月
+			first_time(&year, &month, &ds_dm_index, &ds_dm_workday);
+			//生成月曆
+			head = create_calendar_list_console(year, month, ds_dm_index, ds_dm_workday);		
+			//列印月曆
+			print_calendar_list_console(head);													
 			continue;
 		}
 		case(1):
 		{
 			printf("****** 請假系統 ******\n");
+
 			leave_system(head);
+			//列印月曆
+			print_calendar_list_console(head);
 			continue;
 		}
 		case(2):
 		{
-			printf("****** 列印班表 ******\n");
+			printf("****** 列印特定班表 ******\n");
+			//確認是否有已生成的班表，若有則刪除並生成新班表
+			check_delete_head(head);
+			receive_data(&year, &month, &ds_dm_index, &ds_dm_workday);
+			//生成月曆
+			head = create_calendar_list_console(year, month, ds_dm_index, ds_dm_workday);
 			print_calendar_list_console(head);
 			continue;
 		}
 		case(3):
 		{
 			printf("****** 列印工時表 ******\n");
+			//計算不含請假人員工時
+			total_working_hours_calculate(head);
+			//加班人員工時新增
+			handle_leave_replacement(head);
+			//列印
 			total_working_hours_print(head);
+			//工時歸零
+			working_hour_zero(dm_working_hours, employee_working_hours);
+
 			continue;
 		}
 		case(4):
@@ -697,7 +710,7 @@ void operation_system(list* head, int year, int month, int* ds_dm_index, int* ds
 			continue;
 		}
 		}
-		if (mode == 0)
+		if (mode == 4)
 			break;
 	}
 }
@@ -744,21 +757,16 @@ void total_working_hours_calculate(list* head)
 		}
 		current = current->next;
 	}
+}
 
-	//加班人員工時新增
-	handle_leave_replacement(head);
-
-	//列印
-	total_working_hours_print(head);
-
-	//test_hours(head);
-
-	//工時歸零
+void working_hour_zero(float dm_working_hours[DM_NUMS], float employee_working_hours[EMPLOYEE_NUMS])
+{
+	int i;
 	for (i = 0; i < DM_NUMS; i++)
 	{
-		dm_working_hours[i] = 0.0;
-		employee_working_hours[2 * i] = 0.0;
-		employee_working_hours[2 * i + 1] = 0.0;
+		dm_working_hours[i] = 0.0f;
+		employee_working_hours[2 * i] = 0.0f;
+		employee_working_hours[2 * i + 1] = 0.0f;
 	}
 }
 
@@ -1152,4 +1160,13 @@ void first_time(int* year, int* month, int* ds_dm_index, int* ds_dm_workday)
 	first_time_dm_info(ds_dm_index, ds_dm_workday);
 
 	return;
+}
+
+void check_delete_head(list* head)
+{
+	if (head != NULL)
+	{
+		free_list(head);
+		head = NULL;
+	}
 }

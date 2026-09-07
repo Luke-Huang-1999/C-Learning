@@ -5,6 +5,9 @@
     {
       "AbsoluteMoniker": "D:0:0:{EB34FBB2-4267-42F1-A316-C03D80CE5AA3}|Lisa Project.vcxproj|C:\\Users\\USER\\Desktop\\C\u8A9E\u8A00\\C-Learning\\Lisa Project\\Lisa Project.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{EB34FBB2-4267-42F1-A316-C03D80CE5AA3}|Lisa Project.vcxproj|solutionrelative:Lisa Project.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt\\stdio.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,17 +17,30 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "stdio.h",
+              "DocumentMoniker": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt\\stdio.h",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\..\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt\\stdio.h",
+              "ToolTip": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt\\stdio.h",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\..\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt\\stdio.h",
+              "ViewState": "AgIAAB4EAAAAAAAAAAAWwCsEAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-09-07T01:38:15.551Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Lisa Project.c",
               "DocumentMoniker": "C:\\Users\\USER\\Desktop\\C\u8A9E\u8A00\\C-Learning\\Lisa Project\\Lisa Project.c",
               "RelativeDocumentMoniker": "Lisa Project.c",
-              "ToolTip": "C:\\Users\\USER\\Desktop\\C\u8A9E\u8A00\\C-Learning\\Lisa Project\\Lisa Project.c",
-              "RelativeToolTip": "Lisa Project.c",
-              "ViewState": "AgIAAJgCAAAAAAAAAAAqwIkCAAAKAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\USER\\Desktop\\C\u8A9E\u8A00\\C-Learning\\Lisa Project\\Lisa Project.c*",
+              "RelativeToolTip": "Lisa Project.c*",
+              "ViewState": "AgIAAJoCAAAAAAAAAAAUwKsCAABQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
               "WhenOpened": "2026-06-25T15:15:16.128Z",
               "EditorCaption": ""
