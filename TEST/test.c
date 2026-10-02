@@ -1,20 +1,22 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
-#include <time.h>
+
 
 int main()
 {
-    time_t now;
-    struct tm* current;
+    FILE *fptr = fopen("test.csv", "w");
 
-    now = time(NULL);
+    if (fptr == 1)
+    {
+        printf("檔案開啟失敗。\n");
+        return 1;
+    }
 
-    current = localtime(&now);
-    
-    printf("年份：%d\n", current->tm_year + 1900);
-    printf("月份：%d\n", current->tm_mon + 1);
-    printf("日期：%d\n", current->tm_mday);
-
+    fprintf(fptr, "姓名,成績\n");
+    fprintf(fptr, "Tom,95\n");
+    fprintf(fptr, "Mary,85\n");
+    fprintf(fptr, "John,78\n");
+    fclose(fptr);
     return 0;
 }
 
