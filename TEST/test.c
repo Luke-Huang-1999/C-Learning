@@ -1,25 +1,14 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
-
-void change(int* num);
-
-void show(int a);
-
+#include<stdlib.h>
+#include <string.h>
 int main()
 {
-    int num = 100;
-    show(num);
+    char t1[10] = "Luke";
+    char t2[10] = "Lukeqq";
+    int back = strcmp(t1, t2);
 
     return 0;
 }
 
-void change(int* num)
-{
-    *num = 100;
-}
-void show(int a)
-{
-    a = 100;
-    printf("num = %d\n", a);
-}
 
