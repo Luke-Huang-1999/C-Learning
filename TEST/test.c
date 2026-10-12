@@ -4,10 +4,14 @@
 #include <string.h>
 int main()
 {
-    char t1[10] = "Luke";
-    char t2[10] = "Lukeqq";
-    int back = strcmp(t1, t2);
-
+    char test[100] = { "==============================" };
+    char test1[100] = { "===" };
+    int i = 0;
+    while (test[i] != '\0')
+    {
+        i++;
+    }
+    printf("有%d個=\n", i);
     return 0;
 }
 
