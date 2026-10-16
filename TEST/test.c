@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <conio.h>
 #include <stdlib.h>
-#include <windows.h>
+//#include <windows.h>
 
 int main(void)
 {
@@ -27,32 +27,32 @@ int main(void)
 
         printf("\n使用方向鍵移動，按 Enter 確認\n");
 
-        key = _getch();
+        key = _getch();//確認是否是使用方向鍵224
 
         if (key == 224)
         {
             key = _getch();
 
-            if (key == 72)
+            if (key == 72)//向上
             {
                 choice--;
                 if (choice < 0)
                     choice = 1;
             }
-            else if (key == 80)
+            else if (key == 80)//向下
             {
                 choice++;
                 if (choice > 1)
                     choice = 0;
             }
         }
-        else if (key == 13)
+        else if (key == 13)                 //ENTER
         {
             break;
         }
     }
 
-    //system("cls");
+    system("cls");
 
     if (choice == 0)
         printf("你選擇了：出門\n");
